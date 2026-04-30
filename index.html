@@ -858,11 +858,13 @@
     </details>
 
     <div class="toc-heading" style="margin-top:8px;">Additional Modules</div>
-    <div class="toc-section"><a href="#reverse-engineering" class="toc-link">Reverse Engineering Control</a></div>
-    <div class="toc-section"><a href="#beta-upload" class="toc-link">Beta Upload to Play Store</a></div>
-    <div class="toc-section"><a href="#maven-migration" class="toc-link">AAR → Maven Migration</a></div>
-    <div class="toc-section"><a href="#upi-fraud-prevention" class="toc-link">UPI Fraud Prevention</a></div>
-    <div class="toc-section"><a href="#integration-checklist" class="toc-link">Integration Checklist</a></div>
+    <div class="toc-section"><a href="#reverse-engineering" class="toc-link">6. Reverse Engineering Control</a></div>
+    <div class="toc-section"><a href="#threat-signals" class="toc-link">7. Advanced Threat Signal (ATS) SDK</a></div>
+    <div class="toc-section"><a href="#beta-upload" class="toc-link">8. Beta Upload to Play Store</a></div>
+    <div class="toc-section"><a href="#maven-migration" class="toc-link">9. AAR → Maven Migration</a></div>
+    <div class="toc-section"><a href="#integration-checklist" class="toc-link">10. Integration Checklist</a></div>
+    <div class="toc-section"><a href="#upi-fraud-prevention" class="toc-link">11. UPI Fraud Prevention</a></div>
+    <div class="toc-section"><a href="#plugin-overview" class="toc-link">12. AppProtectt Plugin Integration</a></div>
   </nav>
 
   <!-- MAIN CONTENT -->
@@ -955,6 +957,7 @@
           <div class="step-body">
             <div class="step-title">Add the Correct Feature File</div>
             <p>Paste the appropriate PNG file into the <code>res/raw/</code> folder:</p>
+            <p>Download the feature file from the Release Document shared by the Protectt.ai team.</p>
             <table>
               <thead><tr><th>Environment</th><th>File Name</th></tr></thead>
               <tbody>
@@ -1039,8 +1042,9 @@
           <span class="code-lang">dependencies block</span>
           <div class="code-dots"><span></span><span></span><span></span></div>
         </div>
-        <pre><code><span class="fn">implementation</span> <span class="str">"ai.protectt.sdk:appprotectt:4.5.0"</span></code></pre>
+        <pre><code><span class="fn">implementation</span> <span class="str">"ai.protectt.sdk:appprotectt:X.X"</span></code></pre>
       </div>
+      <p><em>Protectt.ai team will share the latest updated and stable SDK version. Use that version in your project.</em></p>
 
       <h4>Step 3 — Add Maven Repository</h4>
       <p>Add the Protectt.ai Maven repository to your <strong>project-level</strong> <code>build.gradle</code> or <code>settings.gradle</code>:</p>
@@ -1392,6 +1396,74 @@ clientInfo.<span class="fn">setAppVersionName</span>(<span class="cls">BuildConf
     abiFilters <span class="str">'x86'</span>, <span class="str">'x86_64'</span>, <span class="str">'armeabi-v7a'</span>, <span class="str">'arm64-v8a'</span>
 }</code></pre>
       </div>
+
+
+      <h3 id="proguard-signing">4.2 Signing Configuration for Consistent Trust ID</h3>
+      <p>To generate a unique and consistent Trust ID across development and production builds, use the same keystore configuration for both debug and release builds.</p>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="signing-groovy">Groovy</button>
+          <button class="tab-btn kts" data-tab="signing-kts">Kotlin DSL</button>
+        </div>
+        <div class="tab-pane active" data-tab="signing-groovy">
+          <div class="code-block"><div class="code-header"><span class="code-lang">build.gradle (:app)</span><button class="copy-btn" data-copy>Copy</button></div><pre><code>android {
+    signingConfigs {
+        common {
+            keyAlias "your_key_alias"
+            keyPassword "your_key_password"
+            storeFile file("path/to/your-keystore.jks")
+            storePassword "your_store_password"
+            v1SigningEnabled false
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.common
+        }
+
+        release {
+            signingConfig signingConfigs.common
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}</code></pre></div>
+        </div>
+        <div class="tab-pane" data-tab="signing-kts">
+          <div class="code-block"><div class="code-header"><span class="code-lang">build.gradle.kts (:app)</span><button class="copy-btn" data-copy>Copy</button></div><pre><code>android {
+    signingConfigs {
+        create("common") {
+            keyAlias = "your_key_alias"
+            keyPassword = "your_key_password"
+            storeFile = file("path/to/your-keystore.jks")
+            storePassword = "your_store_password"
+            enableV1Signing = false
+            enableV2Signing = true
+        }
+    }
+
+    buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("common")
+        }
+
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("common")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+}</code></pre></div>
+        </div>
+      </div>
+
     </section>
 
     <!-- ═══════════════════════════════════ -->
@@ -1741,7 +1813,7 @@ JNIEXPORT jstring JNICALL
         <div class="callout-body">
           <strong>Backend Plugin Integration</strong>
           The backend Java plugin handles the server-side processing of signals. It decrypts the encrypted signal, validates integrity parameters, returns an <strong>ALLOW / BLOCK</strong> verdict, and integrates with your fraud/risk engine.<br>
-          <a href="https://docu.protectt.ai/appauth/java-integration" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-size:13px;margin-top:6px;display:inline-block;">→ Backend Java Integration Guide: https://docu.protectt.ai/appauth/java-integration</a>
+          <p style="color:var(--blue);font-size:13px;margin-top:6px;">Refer section 7.1 — Java Backend Plugin Integration.</p>
         </div>
       </div>
 
@@ -2076,7 +2148,7 @@ AppProtecttInteractor.recevieEventCallback(
         <li>Remove any local <code>.aar</code> files from your project's <code>libs</code> folder</li>
         <li>Remove any <code>flatDir</code> repository entries referencing local libs</li>
         <li>Add the Protectt.ai Maven repository URL and credentials as described in Section 2</li>
-        <li>Replace local file dependencies with the Maven coordinate: <code>implementation "ai.protectt.sdk:appprotectt:4.5.0"</code></li>
+        <li>Replace local file dependencies with the Maven coordinate: <code>implementation "ai.protectt.sdk:appprotectt:X.X"</code></li>
         <li>Add Maven credentials to <code>local.properties</code> (or directly in the Gradle file for CI/CD)</li>
         <li>Sync Gradle and verify the build succeeds</li>
       </ul>
@@ -2092,22 +2164,11 @@ AppProtecttInteractor.recevieEventCallback(
 
     <section class="section" id="integration-checklist">
       <div class="section-label">Final Validation</div>
-      <h2><span class="section-num">14</span> Integration Checklist</h2>
+      <h2><span class="section-num">10</span> Integration Checklist</h2>
       <p>Use this final checklist before your production rollout:</p>
       <div class="callout note"><strong>Production Checks</strong><ul><li>Confirm SDK and ATS dependencies resolve from the configured Maven repository.</li><li>Verify initialization runs once in the Application class for Java/Kotlin implementation.</li><li>Ensure ProGuard/R8 rules are applied for release builds only.</li><li>Validate NDK binding methods load and return expected identifiers.</li><li>Run plugin tasks and confirm generated files are committed as needed.</li><li>Verify signal request/response encryption and backend validation response handling.</li><li>Perform UAT and BETA Play Store flow validation before production release.</li></ul></div>
       <div class="callout warn"><strong>Common Mistakes</strong><ul><li>Mixing Groovy and Kotlin DSL snippets in the same Gradle file.</li><li>Applying plugin before classpath setup.</li><li>Skipping callback registration or using wrong launcher class name.</li><li>Not aligning backend checks with frontend ATS payload format.</li></ul></div>
     </section>
-
-    <hr>
-
-    <!-- FOOTER NOTE -->
-    <div style="text-align:center; padding: 20px 0 40px;">
-      <p style="font-size:12px; color:var(--text-subtle);">
-        AppProtectt SDK Integration Guide · Ver 4.7 · 24 October 2025<br>
-        <span style="color:var(--border)">—</span><br>
-        © Protectt.ai Labs Private Limited. Confidential and Proprietary.
-      </p>
-    </div>
 
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- SECTION 7 — SUBSECTION: JAVA BACKEND PLUGIN           -->
@@ -2577,8 +2638,8 @@ try {
     <!-- ═══════════════════════════════════════════════════ -->
     <hr>
     <section class="section" id="upi-fraud-prevention">
-      <div class="section-label">Section 12</div>
-      <h2><span class="section-num">12</span> UPI Fraud Prevention Guidelines</h2>
+      <div class="section-label">Section 11</div>
+      <h2><span class="section-num">11</span> UPI Fraud Prevention Guidelines</h2>
 
       <p>This section outlines a layered defence strategy for UPI-enabled Android applications. Each layer independently reduces fraud surface area; combined, they provide defence-in-depth against the most common attack vectors targeting mobile payment flows.</p>
 
@@ -2593,7 +2654,7 @@ try {
 
     <!-- 13.1 AUTO PLAY PROTECTION -->
     <section class="section" id="upi-play-protection">
-      <div class="section-label">Section 12.1</div>
+      <div class="section-label">Section 11.1</div>
       <h2><span class="section-num" style="background:var(--accent-dark)">12.1</span> Enable Auto Play Protection</h2>
 
       <p>Ensure your app is protected against tampering, repackaging, and distribution from untrusted sources. Apps distributed through side-loading bypass Google Play's automated malware scanning and integrity verification, leaving users exposed to trojans and credential-harvesting overlays.</p>
@@ -2657,7 +2718,7 @@ try {
 
     <!-- 13.2 PLAY INTEGRITY API -->
     <section class="section" id="upi-play-integrity">
-      <div class="section-label">Section 12.2</div>
+      <div class="section-label">Section 11.2</div>
       <h2><span class="section-num" style="background:var(--accent-dark)">12.2</span> Implement Play Integrity API</h2>
 
       <p>The <strong>Google Play Integrity API</strong> provides a cryptographically signed integrity verdict that your backend can verify before completing any sensitive operation. Unlike client-side checks, which can be bypassed by a motivated attacker, backend verification of the integrity token is significantly harder to circumvent.</p>
@@ -2714,7 +2775,7 @@ integrityManager.requestIntegrityToken(request)
 
     <!-- 13.3 ATS -->
     <section class="section" id="upi-ats">
-      <div class="section-label">Section 12.3</div>
+      <div class="section-label">Section 11.3</div>
       <h2><span class="section-num" style="background:var(--accent-dark)">12.3</span> Enable Advanced Threat Signaling (ATS)</h2>
 
       <p>Advanced Threat Signaling provides continuous, real-time device integrity monitoring throughout the user session — not just at app launch. Where Play Integrity gives a point-in-time verdict, ATS tracks threat events as they evolve (e.g., a root tool being activated mid-session) and surfaces them to your backend for dynamic risk scoring.</p>
@@ -2754,7 +2815,7 @@ integrityManager.requestIntegrityToken(request)
 
     <!-- 13.4 ENCRYPTION -->
     <section class="section" id="upi-encryption">
-      <div class="section-label">Section 12.4</div>
+      <div class="section-label">Section 11.4</div>
       <h2><span class="section-num" style="background:var(--accent-dark)">12.4</span> Encrypt All Requests and Responses</h2>
 
       <p>Transport-layer security alone is not sufficient for financial applications. Payload-level encryption ensures that even if TLS is terminated by a proxy or the device's certificate trust store has been manipulated, sensitive data remains protected.</p>
@@ -2825,8 +2886,8 @@ integrityManager.requestIntegrityToken(request)
     <!-- SECTION 13: APPPROTECTT PLUGIN INTEGRATION GUIDE           -->
     <!-- ═══════════════════════════════════════════════════════════ -->
     <section class="section" id="plugin-overview">
-      <div class="section-label">Section 13</div>
-      <h2><span class="section-num">13</span> AppProtectt Plugin Integration Guide</h2>
+      <div class="section-label">Section 12</div>
+      <h2><span class="section-num">12</span> AppProtectt Plugin Integration Guide</h2>
 
       <p>The AppProtectt Gradle Plugin automates SDK integration by injecting all required code hooks, UI assets, and entry points through simple Gradle tasks. This is the <strong>fastest path to integration</strong> — instead of manually performing steps 1–6, the plugin handles it all in one command.</p>
 
@@ -2881,8 +2942,8 @@ integrityManager.requestIntegrityToken(request)
 
     <!-- ── STEP 1 ── -->
     <section class="section" id="plugin-step1">
-      <div class="section-label">Section 13 — Step 1</div>
-      <h2><span class="section-num" style="background:var(--accent-dark)">13.1</span> Project-Level Gradle — Add Maven Repo &amp; Classpath</h2>
+      <div class="section-label">Section 12 — Step 1</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.1</span> Project-Level Gradle — Add Maven Repo &amp; Classpath</h2>
 
       <p>Open your <strong>project-level</strong> Gradle file and add the <code>buildscript</code> block. If <code>buildscript</code> already exists, merge only the <code>maven</code> repository and <code>classpath</code> entries into it.</p>
 
@@ -2966,8 +3027,8 @@ plugins {
 
     <!-- ── STEP 2 ── -->
     <section class="section" id="plugin-step2">
-      <div class="section-label">Section 13 — Step 2</div>
-      <h2><span class="section-num" style="background:var(--accent-dark)">13.2</span> App-Level Gradle — Apply the Plugin</h2>
+      <div class="section-label">Section 12 — Step 2</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.2</span> App-Level Gradle — Apply the Plugin</h2>
 
       <p>Open your <strong>app-level</strong> Gradle file. The plugin must be applied using the legacy <code>apply</code> syntax <em>after</em> the <code>plugins {}</code> block, because the classpath is registered in <code>buildscript</code> (not in the new plugin DSL).</p>
 
@@ -3005,8 +3066,8 @@ apply(plugin = "ai.protectt.plugin.AppProtecttInjector")</code></pre>
 
     <!-- ── STEP 3 ── -->
     <section class="section" id="plugin-step3">
-      <div class="section-label">Section 13 — Step 3</div>
-      <h2><span class="section-num" style="background:var(--accent-dark)">13.3</span> Run Gradle Injection Tasks</h2>
+      <div class="section-label">Section 12 — Step 3</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.3</span> Run Gradle Injection Tasks</h2>
 
       <p>After syncing Gradle, the following tasks are available in your project. Run them from the <strong>Gradle panel</strong> in Android Studio or the terminal.</p>
 
@@ -3080,8 +3141,8 @@ apply(plugin = "ai.protectt.plugin.AppProtecttInjector")</code></pre>
 
     <!-- ── STEP 4 ── -->
     <section class="section" id="plugin-step4">
-      <div class="section-label">Section 13 — Step 4 (Optional)</div>
-      <h2><span class="section-num" style="background:var(--accent-dark)">13.4</span> Configure Entry Point Exclusions <span class="tag optional">optional</span></h2>
+      <div class="section-label">Section 12 — Step 4 (Optional)</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.4</span> Configure Entry Point Exclusions <span class="tag optional">optional</span></h2>
 
       <p>By default, <code>entrypointInjector</code> adds hooks to every <code>Activity</code> in your project. To exclude specific activities (e.g., a <code>SplashActivity</code> that runs before the SDK is initialised), add the <code>entryPoint</code> block <em>before</em> the <code>android {}</code> block.</p>
 
@@ -3140,8 +3201,8 @@ android {
 
     <!-- ── STEP 5 ── -->
     <section class="section" id="plugin-step5">
-      <div class="section-label">Section 13 — Step 5 (Flutter only)</div>
-      <h2><span class="section-num" style="background:var(--accent-dark)">13.5</span> Enable Custom Styles <span class="tag optional">Flutter only</span></h2>
+      <div class="section-label">Section 12 — Step 5 (Flutter only)</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.5</span> Enable Custom Styles <span class="tag optional">Flutter only</span></h2>
 
       <p>For <strong>Flutter projects</strong>, the plugin can generate the <code>AlertDialogCustom</code> XML style resource automatically. Enable it by setting <code>enableCustomStyle</code> in your app-level Gradle. The generated style is then passed as the style parameter in <code>initAppProtectt()</code>.</p>
 
@@ -3174,8 +3235,8 @@ extra["enableCustomStyle"] = true</code></pre>
 
     <!-- ── STEP 6 ── -->
     <section class="section" id="plugin-step6">
-      <div class="section-label">Section 13 — Step 6</div>
-      <h2><span class="section-num" style="background:var(--accent-dark)">13.6</span> Post-Injection Checklist &amp; Complete Reference</h2>
+      <div class="section-label">Section 12 — Step 6</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.6</span> Post-Injection Checklist &amp; Complete Reference</h2>
 
       <div class="callout warning">
         <div class="callout-icon">⚠️</div>
@@ -3302,7 +3363,7 @@ android {
 
 dependencies {
     // AppProtectt SDK
-    implementation "ai.protectt.sdk:appprotectt:4.5.0"
+    implementation "ai.protectt.sdk:appprotectt:X.X"
 
     // Your other dependencies
 }</code></pre>
@@ -3377,7 +3438,7 @@ android {
 
 dependencies {
     // AppProtectt SDK
-    implementation("ai.protectt.sdk:appprotectt:4.5.0")
+    implementation("ai.protectt.sdk:appprotectt:X.X")
 
     // Your other dependencies
 }</code></pre>
@@ -3528,7 +3589,7 @@ allprojects {
         // ── Initialise SDK ──
         new AppProtecttInteractor(this).initAppProtectt(
             "SplashActivity",               // launcher activity simple name
-            R.layout.alert_layout,          // alert layout resource
+            R.layout.alert_layout,          // pass the layout file downloaded from the UI resource package
             R.drawable.ic_app_logo,         // your app logo drawable
             0,                              // style (R.style.AlertDialogCustom for Flutter)
             BuildConfig.BUILD_TYPE,
@@ -3583,7 +3644,7 @@ allprojects {
         // ── Initialise SDK ──
         AppProtecttInteractor(this).initAppProtectt(
             "SplashActivity",               // launcher activity simple name
-            R.layout.alert_layout,          // alert layout resource
+            R.layout.alert_layout,          // pass the layout file downloaded from the UI resource package
             R.drawable.ic_app_logo,         // your app logo drawable
             0,                              // style (R.style.AlertDialogCustom for Flutter)
             BuildConfig.BUILD_TYPE,
