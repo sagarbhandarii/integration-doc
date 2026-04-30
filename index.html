@@ -967,16 +967,35 @@
       </div>
 
       <h3 id="kotlin-config">Configure Kotlin (Project Level)</h3>
-      <p>Open your <strong>project-level</strong> <code>build.gradle</code> file and add the Kotlin plugin inside the <code>plugins</code> block:</p>
+      <p>Open your <strong>project-level</strong> Gradle file and add the Kotlin plugin inside the <code>plugins</code> block:</p>
 
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">build.gradle (project)</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="kotlin-config-groovy">Groovy</button>
+          <button class="tab-btn kts" data-tab="kotlin-config-kts">Kotlin DSL</button>
         </div>
-        <pre><code><span class="fn">plugins</span> {
-    <span class="fn">id</span>(<span class="str">"org.jetbrains.kotlin.android"</span>) <span class="kw">version</span> <span class="str">"1.9.0"</span> <span class="kw">apply false</span>
+        <div class="tab-pane active" data-tab="kotlin-config-groovy">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle (project)</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code><span class="fn">plugins</span> {
+    <span class="fn">id</span> <span class="str">'org.jetbrains.kotlin.android'</span> <span class="kw">version</span> <span class="str">'1.9.0'</span> <span class="kw">apply</span> <span class="kw">false</span>
 }</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="kotlin-config-kts">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle.kts (project)</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code><span class="fn">plugins</span> {
+    <span class="fn">id</span>(<span class="str">"org.jetbrains.kotlin.android"</span>) <span class="kw">version</span> <span class="str">"1.9.0"</span> <span class="kw">apply</span>(<span class="kw">false</span>)
+}</code></pre>
+          </div>
+        </div>
       </div>
 
       <h3 id="dependencies">Add Dependencies (App Level)</h3>
@@ -1141,9 +1160,15 @@ mavenRepoPassword = protect.ai-github-password</code></pre>
         </div>
       </div>
 
-      <h3 id="init-java">Java Initialization</h3>
-      <div class="tags"><span class="tag java">Java</span></div>
-
+      <h3 id="init-java">SDK Initialization (Java / Kotlin)</h3>
+      <span id="init-kotlin"></span>
+      <div class="tags"><span class="tag java">Java</span><span class="tag kotlin">Kotlin</span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn java active" data-tab="init-java-pane">Java</button>
+          <button class="tab-btn kotlin" data-tab="init-kotlin-pane">Kotlin</button>
+        </div>
+        <div class="tab-pane active" data-tab="init-java-pane">
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">Application.java — onCreate()</span>
@@ -1182,10 +1207,9 @@ clientInfo.<span class="fn">setAppVersionName</span>(<span class="cls">BuildConf
 <span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">updateCustRefIdAPI</span>(<span class="str">"app_device_id"</span>);
 <span class="cm">/* pass device id inside parameter */</span></code></pre>
       </div>
+        </div>
 
-      <h3 id="init-kotlin">Kotlin Initialization</h3>
-      <div class="tags"><span class="tag kotlin">Kotlin</span></div>
-
+        <div class="tab-pane" data-tab="init-kotlin-pane">
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">Application.kt — onCreate()</span>
@@ -1218,6 +1242,8 @@ clientInfo.<span class="fn">setAppVersionName</span>(<span class="cls">BuildConf
 
 <span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">updateCustRefIdAPI</span>(<span class="str">"app_device_id"</span>)
 <span class="cm">/* pass device id inside parameter */</span></code></pre>
+      </div>
+        </div>
       </div>
 
       <h3 id="flutter-style">Flutter Framework — Alert Dialog Style</h3>
@@ -1664,36 +1690,63 @@ JNIEXPORT jstring JNICALL
       <h3 id="fdanalytics-adding">Adding the SDK</h3>
       <p>Copy <code>analytics-release.aar</code> into your project's <code>libs/</code> folder, then add the dependency to your build file.</p>
 
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">build.gradle (Java project)</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="fd-add-groovy">Groovy</button>
+          <button class="tab-btn kts" data-tab="fd-add-kts">Kotlin DSL</button>
         </div>
-        <pre><code>dependencies {
+        <div class="tab-pane active" data-tab="fd-add-groovy">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>dependencies {
     implementation files("libs/analytics-release.aar")
 }</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="fd-add-kts">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle.kts</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>dependencies {
+    implementation(files("libs/analytics-release.aar"))
+}</code></pre>
+          </div>
+        </div>
       </div>
 
       <h3 id="fdanalytics-usage">Basic Usage</h3>
-      <div class="tags"><span class="tag java">Java</span></div>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Java — Basic Usage</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tags"><span class="tag java">Java</span><span class="tag kotlin">Kotlin</span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn java active" data-tab="fd-basic-java">Java</button>
+          <button class="tab-btn kotlin" data-tab="fd-basic-kotlin">Kotlin</button>
         </div>
-        <pre><code>FDAnalytics sdk = FDAnalytics.getInstance();
-String signal = sdk.getSignal(sessionId, deviceId, timestamp);</code></pre>
+        <div class="tab-pane active" data-tab="fd-basic-java"><div class="code-block"><div class="code-header"><span class="code-lang">Java — Basic Usage</span><div class="code-dots"><span></span><span></span><span></span></div></div><pre><code>FDAnalytics sdk = FDAnalytics.getInstance();
+String signal = sdk.getSignal(sessionId, deviceId, timestamp);</code></pre></div></div>
+        <div class="tab-pane" data-tab="fd-basic-kotlin"><div class="code-block"><div class="code-header"><span class="code-lang">Kotlin — Basic Usage</span><div class="code-dots"><span></span><span></span><span></span></div></div><pre><code>val sdk = FDAnalytics.getInstance()
+val signal = sdk.getSignal(sessionId, deviceId, timestamp)</code></pre></div></div>
       </div>
 
       <h3 id="fdanalytics-events">Registering Threat Events</h3>
       <p>Use <code>AppProtecttInteractor</code> to listen for threat events and forward them to the SDK.</p>
 
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Java — Event Registration</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn java active" data-tab="fd-events-java">Java</button>
+          <button class="tab-btn kotlin" data-tab="fd-events-kotlin">Kotlin</button>
         </div>
-        <pre><code>FDAnalytics sdk = FDAnalytics.getInstance();
+        <div class="tab-pane active" data-tab="fd-events-java">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Java — Event Registration</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>FDAnalytics sdk = FDAnalytics.getInstance();
 
 AppProtecttInteractor.recevieEventCallback(
     new AppProtecttInteractorContract.EventNotified() {
@@ -1709,6 +1762,29 @@ AppProtecttInteractor.recevieEventCallback(
         }
     }
 );</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="fd-events-kotlin">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Kotlin — Event Registration</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>val sdk = FDAnalytics.getInstance()
+
+AppProtecttInteractor.recevieEventCallback(
+    object : AppProtecttInteractorContract.EventNotified {
+        override fun onEvents(response: Response) {
+            sdk.addOnEvent(response.vulnerabilityCode)
+        }
+
+        override fun initEvents(response: Int) {
+            sdk.addInitEvent(response)
+        }
+    }
+)</code></pre>
+          </div>
+        </div>
       </div>
 
       <h4>Event Methods</h4>
@@ -1725,12 +1801,18 @@ AppProtecttInteractor.recevieEventCallback(
       <h3 id="fdanalytics-signal">Generating the Signal</h3>
       <p>Call <code>getSignal()</code> to produce an encrypted signal string, then transmit it to your server.</p>
 
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Java — Generate &amp; Send Signal</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn java active" data-tab="fd-signal-java">Java</button>
+          <button class="tab-btn kotlin" data-tab="fd-signal-kotlin">Kotlin</button>
         </div>
-        <pre><code>try {
+        <div class="tab-pane active" data-tab="fd-signal-java">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Java — Generate &amp; Send Signal</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>try {
     FDAnalytics sdk = FDAnalytics.getInstance();
 
     String signal = sdk.getSignal(
@@ -1744,6 +1826,29 @@ AppProtecttInteractor.recevieEventCallback(
 } catch (Exception e) {
     Log.e("FDAnalyticsError", "Error generating encrypted signal", e);
 }</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="fd-signal-kotlin">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Kotlin — Generate &amp; Send Signal</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>try {
+    val sdk = FDAnalytics.getInstance()
+
+    val signal = sdk.getSignal(
+        "&lt;your-session-id&gt;",
+        "&lt;your-device-id&gt;",
+        "&lt;unix-timestamp-ms&gt;"
+    )
+
+    sendToServer(signal)
+} catch (e: Exception) {
+    Log.e("FDAnalyticsError", "Error generating encrypted signal", e)
+}</code></pre>
+          </div>
+        </div>
       </div>
 
       <h3 id="fdanalytics-transmission">API Transmission &amp; Encoding</h3>
