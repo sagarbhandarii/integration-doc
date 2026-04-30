@@ -632,6 +632,180 @@
   body.theme-light tr:nth-child(even) td { background: #fafbfc; }
   body.theme-light .site-header .brand { color: #1e3a8a; }
   body.theme-light .callout { box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+
+
+  /* Print optimization for PDF export */
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+
+  @media print {
+    :root {
+      --bg: #ffffff !important;
+      --bg-soft: #ffffff !important;
+      --surface: #ffffff !important;
+      --surface-2: #ffffff !important;
+      --text: #000000 !important;
+      --muted: #111111 !important;
+      --border: #d0d7de !important;
+      --accent: #000000 !important;
+    }
+
+    * {
+      color: #000000 !important;
+      background: transparent !important;
+      background-image: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    html, body {
+      background: #ffffff !important;
+      color: #000000 !important;
+      font-size: 13px !important;
+      line-height: 1.55 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .shell,
+    .content {
+      display: block !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      gap: 0 !important;
+    }
+
+    .site-header,
+    .sidebar,
+    .theme-toggle,
+    .copy-btn,
+    .toc-controls,
+    button,
+    input,
+    select,
+    textarea,
+    [role="button"],
+    .tab-controls,
+    .tab-btn {
+      display: none !important;
+    }
+
+    main,
+    .content,
+    .section {
+      max-width: none !important;
+    }
+
+    .section {
+      padding: 24px !important;
+      margin: 0 0 16px 0 !important;
+      border: 1px solid #d0d7de !important;
+      border-radius: 0 !important;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .section + .section {
+      page-break-before: always;
+      break-before: page;
+      border-top: 2px solid #d0d7de !important;
+      padding-top: 24px !important;
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    .section-label,
+    .section-num {
+      color: #000000 !important;
+      font-weight: 700 !important;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    p, li, td, th, code, pre {
+      font-size: 12.5px !important;
+    }
+
+    pre,
+    code,
+    .code-block,
+    table,
+    tr,
+    td,
+    th,
+    .step,
+    .step-section {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+
+    pre {
+      background: #f6f8fa !important;
+      color: #000000 !important;
+      border: 1px solid #d0d7de !important;
+      border-radius: 4px !important;
+      padding: 12px !important;
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+      overflow: visible !important;
+    }
+
+    pre *, code * {
+      color: #000000 !important;
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      border: 1px solid #d0d7de !important;
+    }
+
+    th, td {
+      border: 1px solid #d0d7de !important;
+      padding: 8px !important;
+      vertical-align: top !important;
+      background: #ffffff !important;
+    }
+
+    a,
+    a:visited {
+      color: #000000 !important;
+      text-decoration: none !important;
+    }
+
+    img, svg {
+      max-width: 100% !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+
+    body::before {
+      content: "AppProtectt SDK Guide";
+      display: block;
+      text-align: center;
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 10px;
+      color: #000000;
+    }
+
+    body::after {
+      content: "Page " counter(page);
+      position: fixed;
+      bottom: 8mm;
+      right: 12mm;
+      font-size: 10px;
+      color: #444444 !important;
+    }
+  }
+
 </style>
 </head>
 <body>
