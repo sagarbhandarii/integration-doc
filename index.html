@@ -1238,6 +1238,17 @@ mavenRepoPassword = protect.ai-github-password</code></pre>
         </div>
       </div>
 
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>Download UI Files</strong>
+          Download the UI resources (Alert / Bottomsheet) from:
+          <a href="https://protectt2-my.sharepoint.com/:f:/g/personal/appprotectt_protectt_ai/EqIpd9pRs1NAgvBWOK2IzRMBRZyPz8K_KfEusSGbIC1OGQ?e=jU2BrX" target="_blank" rel="noopener noreferrer" style="color:var(--blue);word-break:break-all;text-decoration:none;">Download UI Resources</a>.
+          <br>
+          <strong>Note:</strong> Add the required UI files in the resource folder.
+        </div>
+      </div>
+
       <h3 id="init-java">SDK Initialization (Java / Kotlin)</h3>
       <span id="init-kotlin"></span>
       <div class="tags"><span class="tag java">Java</span><span class="tag kotlin">Kotlin</span></div>
@@ -1341,16 +1352,7 @@ clientInfo.<span class="fn">setAppVersionName</span>(<span class="cls">BuildConf
 <span class="kw">&lt;/style&gt;</span></code></pre>
       </div>
 
-      <div class="callout tip">
-        <div class="callout-icon">💡</div>
-        <div class="callout-body">
-          <strong>UI Assets</strong>
-          First, download the UI resources (Alert / Bottomsheet) from:
-          <a href="https://protectt2-my.sharepoint.com/:f:/g/personal/appprotectt_protectt_ai/EqIpd9pRs1NAgvBWOK2IzRMBRZyPz8K_KfEusSGbIC1OGQ?e=jU2BrX" target="_blank" rel="noopener noreferrer" style="color:var(--blue);word-break:break-all;text-decoration:none;">Download UI Resources</a>.
-          <br>
-          <strong>Note:</strong> Add the required UI files in the resource folder.
-        </div>
-      </div>
+
     </section>
 
     <!-- ═══════════════════════════════════ -->
@@ -3687,6 +3689,7 @@ allprojects {
   const CHECK_SVG = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5L6.5 12L13 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   document.querySelectorAll('.code-block, .tab-group').forEach(function(block) {
+    if (block.classList.contains('code-block') && block.closest('.tab-group')) return;
     var btn = document.createElement('button');
     btn.className = 'copy-btn';
     btn.setAttribute('aria-label', 'Copy code');
