@@ -1,0 +1,3295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AppProtectt SDK — Integration Guide</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --border-subtle: #21262d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-subtle: #6e7681;
+    --accent: #c0392b;
+    --accent-dark: #922b21;
+    --accent-glow: rgba(192,57,43,0.15);
+    --blue: #58a6ff;
+    --blue-subtle: rgba(88,166,255,0.08);
+    --green: #3fb950;
+    --green-subtle: rgba(63,185,80,0.08);
+    --yellow: #d29922;
+    --yellow-subtle: rgba(210,153,34,0.12);
+    --orange: #e3693b;
+    --orange-subtle: rgba(227,105,59,0.1);
+    --purple: #bc8cff;
+    --code-bg: #0d1117;
+    --code-border: #30363d;
+    --toc-width: 260px;
+    --radius: 8px;
+    --radius-sm: 4px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
+    --font-mono: 'Cascadia Code','Fira Code','Consolas','SF Mono',monospace;
+    --font-body: 'Georgia', 'Times New Roman', serif;
+    --font-ui: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── TOP HEADER ── */
+  .site-header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .site-header .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 17px; font-weight: 700; letter-spacing: -0.3px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .brand-dot { color: var(--accent); }
+  .site-header .meta {
+    font-size: 12px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px; border-radius: 100px;
+    font-size: 11px; font-weight: 600; font-family: var(--font-mono);
+    background: var(--accent-glow); color: var(--accent);
+    border: 1px solid rgba(192,57,43,0.3);
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--toc-width);
+    flex-shrink: 0;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    background: var(--surface);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .toc-heading {
+    padding: 0 20px 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--text-subtle);
+  }
+  .toc-section { margin-bottom: 4px; }
+  .toc-link {
+    display: block;
+    padding: 6px 20px;
+    font-size: 13px; color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .toc-link:hover { color: var(--text); background: var(--surface2); border-left-color: var(--border); }
+  .toc-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-glow); }
+  .toc-link.sub { padding-left: 32px; font-size: 12px; }
+  .toc-link.subsub { padding-left: 44px; font-size: 11px; color: var(--text-subtle); }
+  .toc-link.subsub:hover { color: var(--text-muted); }
+  .toc-link.subsub.active { color: var(--accent); }
+  .toc-divider { height: 1px; background: var(--border-subtle); margin: 12px 20px; }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    flex: 1;
+    min-width: 0;
+    padding: 48px 60px 80px;
+    max-width: 900px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    margin-bottom: 56px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 12px;
+    font-family: var(--font-mono);
+  }
+  .hero h1 {
+    font-size: 38px; font-weight: 800; letter-spacing: -1px;
+    line-height: 1.15; color: var(--text);
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-desc {
+    font-size: 17px; color: var(--text-muted); max-width: 600px; line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .hero-meta {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    font-size: 13px; color: var(--text-muted);
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+  .hero-meta .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 64px;
+    scroll-margin-top: 80px;
+  }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent);
+    font-family: var(--font-mono);
+    margin-bottom: 8px;
+  }
+  .section > h2 {
+    font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
+    color: var(--text); margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--accent); color: white;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  h3 {
+    font-size: 17px; font-weight: 600; color: var(--text);
+    margin: 28px 0 12px;
+  }
+  h4 {
+    font-size: 14px; font-weight: 600; color: var(--text-muted);
+    margin: 20px 0 8px; text-transform: uppercase;
+    letter-spacing: 0.5px; font-family: var(--font-mono);
+  }
+  p { color: var(--text-muted); margin-bottom: 14px; }
+  p strong { color: var(--text); font-weight: 600; }
+  p code, li code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1px 6px;
+    color: var(--purple);
+  }
+
+  /* ── LISTS ── */
+  ul, ol { padding-left: 0; list-style: none; margin-bottom: 14px; }
+  li {
+    color: var(--text-muted); padding: 4px 0 4px 24px;
+    position: relative;
+  }
+  ul > li::before {
+    content: '';
+    position: absolute; left: 6px; top: 14px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: 0.7;
+  }
+  ol { counter-reset: list; }
+  ol > li { counter-increment: list; }
+  ol > li::before {
+    content: counter(list);
+    position: absolute; left: 0;
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    font-family: var(--font-mono); line-height: 1.8;
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    margin: 16px 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--code-border);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-size: 11px; font-weight: 700; font-family: var(--font-mono);
+    color: var(--text-subtle); letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .code-dots { display: flex; gap: 5px; }
+  .code-dots span {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .code-dots span:nth-child(1) { background: #ff5f57; }
+  .code-dots span:nth-child(2) { background: #febc2e; }
+  .code-dots span:nth-child(3) { background: #28c840; }
+  pre {
+    margin: 0;
+    background: var(--code-bg);
+    overflow-x: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  pre::-webkit-scrollbar { height: 5px; }
+  pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  pre code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: #e6edf3;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  /* Syntax coloring */
+  .kw { color: #ff7b72; }       /* keywords */
+  .str { color: #a5d6ff; }      /* strings */
+  .fn { color: #d2a8ff; }       /* functions */
+  .cm { color: #6e7681; }       /* comments */
+  .num { color: #79c0ff; }      /* numbers */
+  .cls { color: #ffa657; }      /* class names */
+  .ann { color: #e3b341; }      /* annotations */
+  .prop { color: #79c0ff; }     /* properties */
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin: 18px 0;
+    display: flex; gap: 12px;
+    border: 1px solid;
+    font-size: 14px;
+  }
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { color: var(--text-muted); }
+  .callout-body strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 13px; }
+
+  .callout.info {
+    background: var(--blue-subtle);
+    border-color: rgba(88,166,255,0.25);
+  }
+  .callout.info .callout-icon { color: var(--blue); }
+
+  .callout.warning {
+    background: var(--yellow-subtle);
+    border-color: rgba(210,153,34,0.3);
+  }
+  .callout.warning .callout-icon { color: var(--yellow); }
+
+  .callout.danger {
+    background: var(--accent-glow);
+    border-color: rgba(192,57,43,0.3);
+  }
+  .callout.danger .callout-icon { color: var(--accent); }
+
+  .callout.success {
+    background: var(--green-subtle);
+    border-color: rgba(63,185,80,0.25);
+  }
+  .callout.success .callout-icon { color: var(--green); }
+
+  .callout.tip {
+    background: var(--orange-subtle);
+    border-color: rgba(227,105,59,0.3);
+  }
+  .callout.tip .callout-icon { color: var(--orange); }
+
+  /* ── STEP CARDS ── */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: flex; gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--surface2); border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--text-muted);
+    flex-shrink: 0; font-family: var(--font-mono);
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 600; color: var(--text); margin-bottom: 6px; }
+
+  /* ── PREREQ GRID ── */
+  .prereq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .prereq-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    transition: border-color 0.15s;
+  }
+  .prereq-card:hover { border-color: var(--accent); }
+  .prereq-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--text-subtle);
+    margin-bottom: 6px; font-family: var(--font-mono);
+  }
+  .prereq-value {
+    font-family: var(--font-mono); font-size: 14px;
+    font-weight: 700; color: var(--blue);
+  }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%; border-collapse: collapse; margin: 16px 0;
+    font-size: 13.5px;
+  }
+  th {
+    text-align: left; padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--text-subtle);
+    font-family: var(--font-mono);
+  }
+  td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 600;
+    font-family: var(--font-mono);
+  }
+  .tag.java { background: rgba(255,123,114,0.12); color: #ff7b72; border: 1px solid rgba(255,123,114,0.25); }
+  .tag.kotlin { background: rgba(188,140,255,0.12); color: #bc8cff; border: 1px solid rgba(188,140,255,0.25); }
+  .tag.gradle { background: rgba(88,166,255,0.1); color: #58a6ff; border: 1px solid rgba(88,166,255,0.2); }
+  .tag.ndkl { background: rgba(63,185,80,0.1); color: #3fb950; border: 1px solid rgba(63,185,80,0.2); }
+  .tag.optional { background: rgba(210,153,34,0.1); color: #d29922; border: 1px solid rgba(210,153,34,0.2); }
+
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+
+  /* ── DIVIDER ── */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-subtle);
+    margin-bottom: 32px; font-family: var(--font-mono);
+  }
+  .breadcrumb span { color: var(--text-subtle); }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--text); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .content { padding: 32px 24px 60px; }
+    .hero h1 { font-size: 28px; }
+    .prereq-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .content { padding: 20px 16px 40px; }
+    .prereq-grid { grid-template-columns: 1fr; }
+    pre { font-size: 12px; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* ── COPY BUTTON ── */
+  .code-block { position: relative; }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-ui);
+    letter-spacing: 0.3px;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s, border-color 0.15s, transform 0.1s;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .copy-btn:hover {
+    color: var(--text);
+    background: var(--surface2);
+    border-color: #58a6ff55;
+  }
+  .copy-btn:active { transform: scale(0.95); }
+  .copy-btn.copied {
+    color: var(--green);
+    border-color: rgba(63,185,80,0.4);
+    background: rgba(63,185,80,0.08);
+  }
+  .copy-btn svg {
+    width: 12px; height: 12px;
+    flex-shrink: 0;
+    transition: opacity 0.15s;
+  }
+  /* ── CODE TABS (Groovy/KTS, Java/Kotlin) ── */
+  .tab-group {
+    margin: 16px 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--code-border);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .tab-bar {
+    display: flex;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 8px 16px;
+    font-size: 11px; font-weight: 700; font-family: var(--font-mono);
+    letter-spacing: 0.4px; text-transform: uppercase;
+    color: var(--text-subtle);
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer; white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--text-muted); }
+  .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab-btn.groovy.active  { color: #e3693b; border-bottom-color: #e3693b; }
+  .tab-btn.kts.active     { color: #bc8cff; border-bottom-color: #bc8cff; }
+  .tab-btn.java.active    { color: #ff7b72; border-bottom-color: #ff7b72; }
+  .tab-btn.kotlin.active  { color: #bc8cff; border-bottom-color: #bc8cff; }
+  .tab-btn.terminal.active{ color: #3fb950; border-bottom-color: #3fb950; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  .tab-pane pre { border-radius: 0; border: none; box-shadow: none; margin: 0; }
+  /* copy btn inside tab-group sits at top-right of the whole widget */
+  .tab-group .copy-btn { top: 6px; }
+
+  /* ── VARIANT LABEL (small pill beside h3) ── */
+  .variant-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 9px; border-radius: 100px;
+    font-size: 10px; font-weight: 700; font-family: var(--font-mono);
+    letter-spacing: 0.5px; text-transform: uppercase;
+    margin-left: 8px; vertical-align: middle;
+  }
+  .variant-pill.groovy { background: rgba(227,105,59,0.12); color: #e3693b; border: 1px solid rgba(227,105,59,0.3); }
+  .variant-pill.kts    { background: rgba(188,140,255,0.12); color: #bc8cff; border: 1px solid rgba(188,140,255,0.25); }
+  .variant-pill.java   { background: rgba(255,123,114,0.12); color: #ff7b72; border: 1px solid rgba(255,123,114,0.25); }
+  .variant-pill.kotlin { background: rgba(188,140,255,0.12); color: #bc8cff; border: 1px solid rgba(188,140,255,0.25); }
+  .variant-pill.both   { background: rgba(88,166,255,0.08);  color: #58a6ff; border: 1px solid rgba(88,166,255,0.2); }
+
+  /* ── STEP TIMELINE (numbered, connected) ── */
+  .timeline { position: relative; padding-left: 0; margin: 24px 0; }
+  .timeline-item {
+    display: flex; gap: 20px; margin-bottom: 0;
+    position: relative;
+  }
+  .timeline-left {
+    display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0; width: 36px;
+  }
+  .timeline-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; font-family: var(--font-mono);
+    flex-shrink: 0; z-index: 1;
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .timeline-line {
+    width: 2px; flex: 1; min-height: 24px;
+    background: linear-gradient(to bottom, var(--accent), var(--border));
+    opacity: 0.4; margin-top: 4px; margin-bottom: 0;
+  }
+  .timeline-item:last-child .timeline-line { display: none; }
+  .timeline-body {
+    flex: 1; padding-bottom: 40px;
+  }
+  .timeline-item:last-child .timeline-body { padding-bottom: 0; }
+  .timeline-title {
+    font-size: 17px; font-weight: 700; color: var(--text);
+    margin-bottom: 8px; line-height: 1.3;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .timeline-desc { color: var(--text-muted); font-size: 14px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="#" class="brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#c0392b" stroke-width="2"/><path d="M8 12l3 3 5-5" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Protectt<span class="brand-dot">.ai</span>
+  </a>
+  <div class="meta">
+    <span class="badge">v4.7</span>
+    <span>24 Oct 2025</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR / TOC -->
+  <nav class="sidebar" aria-label="Table of contents">
+    <div class="toc-heading">On this page</div>
+
+    <div class="toc-section">
+      <a href="#prerequisites" class="toc-link">Prerequisites</a>
+    </div>
+    <div class="toc-section">
+      <a href="#project-setup" class="toc-link">Project Setup</a>
+      <a href="#kotlin-config" class="toc-link sub">Kotlin Configuration</a>
+      <a href="#dependencies" class="toc-link sub">Dependencies</a>
+    </div>
+    <div class="toc-section">
+      <a href="#resource-files" class="toc-link">Resource Files</a>
+    </div>
+    <div class="toc-section">
+      <a href="#sdk-init" class="toc-link">SDK Initialization</a>
+      <a href="#init-java" class="toc-link sub">Java</a>
+      <a href="#init-kotlin" class="toc-link sub">Kotlin</a>
+      <a href="#flutter-style" class="toc-link sub">Flutter Style</a>
+    </div>
+    <div class="toc-section">
+      <a href="#proguard" class="toc-link">ProGuard</a>
+    </div>
+    <div class="toc-section">
+      <a href="#ndk" class="toc-link">NDK Integration</a>
+      <a href="#ndk-setup" class="toc-link sub">Setup</a>
+      <a href="#ndk-cpp" class="toc-link sub">C++ Code</a>
+      <a href="#ndk-java" class="toc-link sub">Java / Kotlin Binding</a>
+    </div>
+    <div class="toc-section">
+      <a href="#reverse-engineering" class="toc-link">Reverse Engineering Control</a>
+      <a href="#re-ndk" class="toc-link sub">NDK Methods</a>
+      <a href="#re-logging" class="toc-link sub">Logging</a>
+      <a href="#re-proguard" class="toc-link sub">ProGuard Rules</a>
+    </div>
+    <div class="toc-section">
+      <a href="#threat-signals" class="toc-link">Advanced Threat Signal (ATS)</a>
+      <a href="#fdanalytics-requirements" class="toc-link sub">Requirements</a>
+      <a href="#fdanalytics-adding" class="toc-link sub">Adding the SDK</a>
+      <a href="#fdanalytics-usage" class="toc-link sub">Basic Usage</a>
+      <a href="#fdanalytics-events" class="toc-link sub">Threat Events</a>
+      <a href="#fdanalytics-signal" class="toc-link sub">Generating Signal</a>
+      <a href="#fdanalytics-transmission" class="toc-link sub">API Transmission</a>
+      <a href="#fdanalytics-security" class="toc-link sub">Security Practices</a>
+      <a href="#backend-overview" class="toc-link sub" style="margin-top:4px;color:var(--blue);opacity:0.85;">↳ Java Backend Plugin</a>
+      <a href="#backend-installation" class="toc-link subsub">Installation</a>
+      <a href="#backend-implementation" class="toc-link subsub">Implementation</a>
+      <a href="#backend-api" class="toc-link subsub">API Reference</a>
+      <a href="#backend-responses" class="toc-link subsub">Response Codes</a>
+      <a href="#backend-flow" class="toc-link subsub">Integration Flow</a>
+      <a href="#backend-sample" class="toc-link subsub">Sample I/O</a>
+    </div>
+    <div class="toc-divider"></div>
+    <div class="toc-section">
+      <a href="#beta-upload" class="toc-link">Beta Upload to Play Store</a>
+    </div>
+    <div class="toc-section">
+      <a href="#maven-migration" class="toc-link">AAR → Maven Migration</a>
+    </div>
+    <div class="toc-divider"></div>
+    <div class="toc-section">
+      <a href="#upi-play-protection" class="toc-link">Auto Play Protection</a>
+      <a href="#upi-play-protection-steps" class="toc-link sub">Enable Steps</a>
+    </div>
+    <div class="toc-section">
+      <a href="#upi-play-integrity" class="toc-link">Play Integrity API</a>
+    </div>
+    <div class="toc-section">
+      <a href="#upi-ats" class="toc-link">Advanced Threat Signaling</a>
+    </div>
+    <div class="toc-section">
+      <a href="#upi-encryption" class="toc-link">Encrypt Requests &amp; Responses</a>
+    </div>
+    <div class="toc-divider"></div>
+    <div class="toc-heading">Plugin Integration</div>
+    <div class="toc-section">
+      <a href="#plugin-overview" class="toc-link">Overview</a>
+    </div>
+    <div class="toc-section">
+      <a href="#plugin-step1" class="toc-link">Step 1 — Project Gradle</a>
+      <a href="#plugin-step1-groovy" class="toc-link sub">Groovy DSL</a>
+      <a href="#plugin-step1-kts" class="toc-link sub">Kotlin DSL</a>
+    </div>
+    <div class="toc-section">
+      <a href="#plugin-step2" class="toc-link">Step 2 — Apply Plugin</a>
+      <a href="#plugin-step2-groovy" class="toc-link sub">Groovy DSL</a>
+      <a href="#plugin-step2-kts" class="toc-link sub">Kotlin DSL</a>
+    </div>
+    <div class="toc-section">
+      <a href="#plugin-step3" class="toc-link">Step 3 — Gradle Tasks</a>
+    </div>
+    <div class="toc-section">
+      <a href="#plugin-step4" class="toc-link">Step 4 — Entry Point Exclusions</a>
+      <a href="#plugin-step4-groovy" class="toc-link sub">Groovy DSL</a>
+      <a href="#plugin-step4-kts" class="toc-link sub">Kotlin DSL</a>
+    </div>
+    <div class="toc-section">
+      <a href="#plugin-step5" class="toc-link">Step 5 — Custom Styles (Flutter)</a>
+      <a href="#plugin-step5-groovy" class="toc-link sub">Groovy DSL</a>
+      <a href="#plugin-step5-kts" class="toc-link sub">Kotlin DSL</a>
+    </div>
+    <div class="toc-section">
+      <a href="#plugin-step6" class="toc-link">Step 6 — Execution Notes</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <div class="breadcrumb">
+      <a href="#">Docs</a>
+      <span>›</span>
+      <a href="#">Android</a>
+      <span>›</span>
+      <span>AppProtectt SDK</span>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">Integration Guide</div>
+      <h1><span>AppProtectt</span> SDK<br>Android Integration</h1>
+      <p class="hero-desc">Complete guide to integrating the AppProtectt security SDK into your Android application using Java or Kotlin. Covers dependency setup, initialization, NDK configuration, reverse engineering protection, and Play Store deployment.</p>
+      <div class="hero-meta">
+        <span><span class="dot"></span> SDK Version 4.5.0</span>
+        <span><span class="dot" style="background:var(--blue)"></span> Java &amp; Kotlin</span>
+        <span><span class="dot" style="background:var(--purple)"></span> NDK Support</span>
+        <span><span class="dot" style="background:var(--yellow)"></span> 24 October 2025</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- SECTION 1: PREREQUISITES           -->
+    <!-- ═══════════════════════════════════ -->
+    <section class="section" id="prerequisites">
+      <div class="section-label">Section 01</div>
+      <h2><span class="section-num">1</span> Prerequisites</h2>
+
+      <p>Before integrating AppProtectt SDK, ensure your development environment meets the following minimum requirements:</p>
+
+      <div class="prereq-grid">
+        <div class="prereq-card">
+          <div class="prereq-label">Min AGP Version</div>
+          <div class="prereq-value">8.10.1</div>
+        </div>
+        <div class="prereq-card">
+          <div class="prereq-label">Android Studio</div>
+          <div class="prereq-value" style="font-size:12px">Meerkat Feature Drop<br>2024.3.2+</div>
+        </div>
+        <div class="prereq-card">
+          <div class="prereq-label">Min Gradle Version</div>
+          <div class="prereq-value">8.11.1</div>
+        </div>
+        <div class="prereq-card">
+          <div class="prereq-label">AndroidX</div>
+          <div class="prereq-value" style="color:var(--green)">Required</div>
+        </div>
+      </div>
+
+      <h3>Enable AndroidX</h3>
+      <p>If AndroidX is not yet enabled in your project, add the following to your <code>gradle.properties</code> file:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">gradle.properties</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="prop">android.useAndroidX</span>=<span class="str">true</span>
+<span class="prop">android.nonTransitiveRClass</span>=<span class="str">true</span></code></pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- SECTION 2: PROJECT SETUP           -->
+    <!-- ═══════════════════════════════════ -->
+    <section class="section" id="project-setup">
+      <div class="section-label">Section 02</div>
+      <h2><span class="section-num">2</span> Project Setup</h2>
+
+      <p>If you are using a hybrid framework (e.g., Flutter, Ionic, Capacitor), open the Android sub-project in Android Studio by navigating to:</p>
+      <p><strong>File → Open</strong> → Browse to <code>project/platforms/android</code> → Click <strong>OK</strong></p>
+
+      <h3 id="resource-files">Add Feature Resource Files</h3>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Create a Raw Resource Directory</div>
+            <p>In Android Studio, right-click <strong>res</strong> → <strong>New</strong> → <strong>Android Resource Directory</strong> → Select <code>raw</code> from the <em>Resource type</em> dropdown → Click <strong>OK</strong>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Add the Correct Feature File</div>
+            <p>Paste the appropriate PNG file into the <code>res/raw/</code> folder:</p>
+            <table>
+              <thead><tr><th>Environment</th><th>File Name</th></tr></thead>
+              <tbody>
+                <tr><td>UAT / Non-Prod</td><td><code>featuredev.png</code></td></tr>
+                <tr><td>Production / CUG</td><td><code>featureprod.png</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="kotlin-config">Configure Kotlin (Project Level)</h3>
+      <p>Open your <strong>project-level</strong> <code>build.gradle</code> file and add the Kotlin plugin inside the <code>plugins</code> block:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">build.gradle (project)</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">plugins</span> {
+    <span class="fn">id</span>(<span class="str">"org.jetbrains.kotlin.android"</span>) <span class="kw">version</span> <span class="str">"1.9.0"</span> <span class="kw">apply false</span>
+}</code></pre>
+      </div>
+
+      <h3 id="dependencies">Add Dependencies (App Level)</h3>
+      <p>Open your <strong>app-level</strong> <code>build.gradle</code> file and configure the following:</p>
+
+      <h4>Step 1 — Apply Plugins</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">build.gradle (app)</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">plugins</span> {
+    <span class="fn">id</span> <span class="str">'com.android.application'</span>
+    <span class="fn">id</span> <span class="str">'kotlin-android'</span>
+}</code></pre>
+      </div>
+
+      <h4>Step 2 — Add SDK Dependency</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">dependencies block</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">implementation</span> <span class="str">"ai.protectt.sdk:appprotectt:4.5.0"</span></code></pre>
+      </div>
+
+      <h4>Step 3 — Add Maven Repository</h4>
+      <p>Add the Protectt.ai Maven repository to your <strong>project-level</strong> <code>build.gradle</code> or <code>settings.gradle</code>:</p>
+
+      <p><strong>Local Setup (with local.properties):</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">build.gradle (project) — Local</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">allprojects</span> {
+    <span class="fn">repositories</span> {
+        <span class="fn">google</span>()
+        <span class="fn">jcenter</span>()
+        <span class="fn">maven</span> {
+            url <span class="str">"https://package.protectt.ai/repository/ai-protecttsdk-appprotectt/"</span>
+            <span class="fn">credentials</span> {
+                username = <span class="fn">findProperty</span>(<span class="str">"mavenRepoUser"</span>)?.<span class="fn">toString</span>()
+                password = <span class="fn">findProperty</span>(<span class="str">"mavenRepoPassword"</span>)?.<span class="fn">toString</span>()
+            }
+        }
+    }
+}</code></pre>
+      </div>
+
+      <p><strong>CI/CD Setup (direct values):</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">build.gradle (project) — CI/CD</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">allprojects</span> {
+    <span class="fn">repositories</span> {
+        <span class="fn">google</span>()
+        <span class="fn">jcenter</span>()
+        <span class="fn">maven</span> {
+            url <span class="str">"https://package.protectt.ai/repository/ai-protecttsdk-appprotectt/"</span>
+            <span class="fn">credentials</span> {
+                username = <span class="str">"protect.ai-github-username"</span>
+                password = <span class="str">"protect.ai-github-password"</span>
+            }
+        }
+    }
+}</code></pre>
+      </div>
+
+      <h4>Step 4 — Configure local.properties (Local Dev Only)</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">local.properties</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>mavenRepoUser = protect.ai-github-username
+mavenRepoPassword = protect.ai-github-password</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          <strong>Credentials Delivery</strong>
+          The <code>protect.ai-github-username</code> and <code>protect.ai-github-password</code> credentials will be shared with you one-to-one over email. For CI/CD pipelines, use direct values (as shown above) instead of <code>findProperty(...)</code>.
+        </div>
+      </div>
+
+      <h4>Step 5 — Build Date Configuration</h4>
+      <p>Add the following inside your <strong>app-level</strong> <code>build.gradle</code>:</p>
+
+      <p><strong>a) Within <code>android</code> block:</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">android block</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">def</span> <span class="fn">getBuildDate</span> = {<span class="kw">-></span>
+    <span class="kw">def</span> date = <span class="kw">new</span> <span class="cls">Date</span>()
+    <span class="kw">def</span> formattedDate = date.<span class="fn">format</span>(<span class="str">'yyyy-MM-dd HH:mm:ss'</span>)
+    <span class="kw">return</span> <span class="str">"\""</span>+formattedDate+<span class="str">"\""</span>
+}</code></pre>
+      </div>
+
+      <p><strong>b) Within <code>defaultConfig</code> block:</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">defaultConfig block</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">buildConfigField</span> <span class="str">"String"</span>, <span class="str">"APP_BUILD_TIME"</span>, <span class="fn">getBuildDate</span>()</code></pre>
+      </div>
+
+      <h4>Step 6 — Add Product Flavor</h4>
+      <p>Add the <code>APP_FLAVOR</code> build config field inside your app flavors:</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">productFlavors</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="cm">// for UAT / NONPROD</span>
+<span class="fn">buildConfigField</span> <span class="str">"String"</span>, <span class="str">"APP_FLAVOR"</span>, <span class="str">"\"nonprod\""</span>
+
+<span class="cm">// for PROD / CUG</span>
+<span class="fn">buildConfigField</span> <span class="str">"String"</span>, <span class="str">"APP_FLAVOR"</span>, <span class="str">"\"prod\""</span></code></pre>
+      </div>
+
+      <h4>Step 7 — taskAffinity in AndroidManifest.xml</h4>
+      <p>In <code>AndroidManifest.xml</code>, add the <code>taskAffinity</code> attribute to the <code>&lt;application&gt;</code> tag (use your Application class path as the value):</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">AndroidManifest.xml</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">&lt;application</span>
+    <span class="prop">android:name</span>=<span class="str">".MyApp"</span>
+    <span class="prop">android:icon</span>=<span class="str">"@mipmap/ic_launcher"</span>
+    <span class="prop">android:label</span>=<span class="str">"@string/app_name"</span>
+    <span class="prop">android:roundIcon</span>=<span class="str">"@mipmap/ic_launcher_round"</span>
+    <span class="prop">android:supportsRtl</span>=<span class="str">"true"</span>
+    <span class="prop">android:taskAffinity</span>=<span class="str">"com.example.sampleappaar.MyApp"</span>
+    <span class="prop">android:theme</span>=<span class="str">"@style/Theme.SampleAppAAR"</span><span class="kw">&gt;</span>
+<span class="kw">&lt;/application&gt;</span></code></pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- SECTION 3: SDK INITIALIZATION      -->
+    <!-- ═══════════════════════════════════ -->
+    <section class="section" id="sdk-init">
+      <div class="section-label">Section 03</div>
+      <h2><span class="section-num">3</span> SDK Initialization</h2>
+
+      <p>Add SDK activation and initialization code in your <strong>Application class</strong>. If an Application class does not exist, create a new class that extends <code>Application()</code> and register it in <code>AndroidManifest.xml</code> via <code>android:name</code>.</p>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Remove TrustID Log Before Go-Live</strong>
+          The <code>Log.i("TrustID", ...)</code> call is used only for extracting the trust ID during debug and testing. Remove it before releasing to production.
+        </div>
+      </div>
+
+      <h3 id="init-java">Java Initialization</h3>
+      <div class="tags"><span class="tag java">Java</span></div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Application.java — onCreate()</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="cm">// this object is an instance of application class
+// remove below TrustID log at the time of go live
+/* Log for extracting trust id for debug and release app */</span>
+<span class="cls">Log</span>.<span class="fn">i</span>(<span class="str">"TrustID"</span>, <span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">getTrust</span>(<span class="kw">this</span>));
+
+<span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">registerCallbackActivities</span>(<span class="kw">this</span>);
+
+<span class="cls">ClientInfo</span> clientInfo = <span class="kw">new</span> <span class="cls">ClientInfo</span>();
+clientInfo.<span class="fn">setPackageName</span>(<span class="str">""</span>);          <span class="cm">// package name</span>
+clientInfo.<span class="fn">setAppName</span>(<span class="str">""</span>);             <span class="cm">// application name</span>
+clientInfo.<span class="fn">setChannelLicenseKey</span>(<span class="str">""</span>);   <span class="cm">// license key</span>
+clientInfo.<span class="fn">setClientId</span>();              <span class="cm">// client id</span>
+clientInfo.<span class="fn">setChannelId</span>();             <span class="cm">// channel id</span>
+clientInfo.<span class="fn">setPassword</span>(<span class="str">""</span>);           <span class="cm">// password id</span>
+clientInfo.<span class="fn">setMainAppVersionCode</span>(<span class="cls">String</span>.<span class="fn">valueOf</span>(<span class="cls">BuildConfig</span>.VERSION_CODE));
+clientInfo.<span class="fn">setAppVersionName</span>(<span class="cls">BuildConfig</span>.VERSION_NAME);
+<span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">setClientInfo</span>(clientInfo);
+
+<span class="cm">// SDK Initialization</span>
+<span class="kw">new</span> <span class="cls">AppProtecttInteractor</span>(<span class="kw">this</span>).<span class="fn">initAppProtectt</span>(
+    <span class="str">"SplashScreen"</span>,
+    R.layout.<span class="prop">alert_layout</span>,
+    R.drawable.<span class="prop">ic_mb</span>,        <span class="cm">// replace with app logo</span>
+    <span class="num">0</span>,                         <span class="cm">// pass the below style in case of flutter framework</span>
+    <span class="cls">BuildConfig</span>.BUILD_TYPE,
+    <span class="num">2</span>,                         <span class="cm">/* for Alert dialog use, pass the argument value as 1 */</span>
+    <span class="cls">BuildConfig</span>.APP_FLAVOR,
+    <span class="cls">BuildConfig</span>.APP_BUILD_TIME
+);
+
+<span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">updateCustRefIdAPI</span>(<span class="str">"app_device_id"</span>);
+<span class="cm">/* pass device id inside parameter */</span></code></pre>
+      </div>
+
+      <h3 id="init-kotlin">Kotlin Initialization</h3>
+      <div class="tags"><span class="tag kotlin">Kotlin</span></div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Application.kt — onCreate()</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="cls">AppProtecttInteractor</span>.<span class="fn">registerCallbackActivities</span>(<span class="kw">this</span>)
+<span class="cls">Log</span>.<span class="fn">i</span>(<span class="str">"TrustID"</span>, <span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">getTrust</span>(<span class="kw">this</span>)!!)
+
+<span class="kw">val</span> clientInfo = <span class="cls">ClientInfo</span>().<span class="fn">apply</span> {
+    packageName = <span class="fn">packageName</span>()
+    appName = <span class="fn">appName</span>()
+    channelLicenseKey = <span class="fn">channelLicenseKey</span>()
+    clientId = <span class="fn">clientId</span>().<span class="fn">toInt</span>()
+    channelId = <span class="fn">channelId</span>().<span class="fn">toInt</span>()
+    password = <span class="fn">password</span>()
+    mainAppVersionCode = <span class="cls">BuildConfig</span>.VERSION_CODE.<span class="fn">toString</span>()
+    appVersionName = <span class="cls">BuildConfig</span>.VERSION_NAME
+}
+<span class="fn">setClientInfo</span>(clientInfo)
+
+<span class="cls">AppProtecttInteractor</span>(<span class="kw">this</span>).<span class="fn">initAppProtectt</span>(
+    <span class="str">"SplashScreen"</span>,
+    R.layout.<span class="prop">alert_layout</span>,
+    R.drawable.<span class="prop">ic_mb</span>, <span class="num">0</span>,
+    <span class="cls">BuildConfig</span>.BUILD_TYPE,
+    <span class="cls">SDKConstants</span>.ALERT_DIALOG, <span class="cm">/* for bottomsheet: SDKConstants.BOTTOMSHEET_DIALOG */</span>
+    <span class="cls">BuildConfig</span>.APP_FLAVOR,
+    <span class="cls">BuildConfig</span>.APP_BUILD_TIME
+)
+
+<span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">updateCustRefIdAPI</span>(<span class="str">"app_device_id"</span>)
+<span class="cm">/* pass device id inside parameter */</span></code></pre>
+      </div>
+
+      <h3 id="flutter-style">Flutter Framework — Alert Dialog Style</h3>
+      <p>When using the Flutter framework, pass a custom style as a parameter in <code>initAppProtectt</code>. First, create a <code>styles.xml</code> (or add to existing <code>themes.xml</code>):</p>
+      <p><strong>Path:</strong> App → res → values → right-click values → New → Values Resource File → name it <code>styles.xml</code> or <code>themes.xml</code></p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">styles.xml</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">&lt;style</span> <span class="prop">name</span>=<span class="str">"AlertDialogCustom"</span>
+    <span class="prop">parent</span>=<span class="str">"android:Theme.DeviceDefault.Dialog.MinWidth"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;item</span> <span class="prop">name</span>=<span class="str">"android:headerDividersEnabled"</span><span class="kw">&gt;</span>true<span class="kw">&lt;/item&gt;</span>
+    <span class="kw">&lt;item</span> <span class="prop">name</span>=<span class="str">"android:background"</span><span class="kw">&gt;</span>#00FFFFFF<span class="kw">&lt;/item&gt;</span>
+    <span class="kw">&lt;item</span> <span class="prop">name</span>=<span class="str">"android:windowBackground"</span><span class="kw">&gt;</span>@android:color/transparent<span class="kw">&lt;/item&gt;</span>
+<span class="kw">&lt;/style&gt;</span></code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>UI Assets</strong>
+          Select your UI assets from the provided template (Alert / Bottomsheet), then add all resource files to the <code>res</code> folder of your project. Contact Protectt.ai for template files.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- SECTION 4: PROGUARD                -->
+    <!-- ═══════════════════════════════════ -->
+    <section class="section" id="proguard">
+      <div class="section-label">Section 04</div>
+      <h2><span class="section-num">4</span> ProGuard Configuration</h2>
+
+      <p>To enable code obfuscation using ProGuard, configure your app-level <code>build.gradle</code> and create/edit the <code>proguard-rules.pro</code> file.</p>
+
+      <h3>Enable Minification</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">build.gradle (app) — buildTypes</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">buildTypes</span> {
+    release {
+        minifyEnabled <span class="kw">true</span>
+        shrinkResources <span class="kw">true</span>  <span class="cm">// recommended but optional</span>
+        proguardFiles <span class="fn">getDefaultProguardFile</span>(<span class="str">'proguard-android-optimize.txt'</span>),
+                      <span class="str">'proguard-rules.pro'</span>
+    }
+}</code></pre>
+      </div>
+
+      <h3>NDK ABI Filters</h3>
+      <p>Move sensitive information from hardcoded strings to NDK. Add the following configuration inside the <code>defaultConfig</code> block:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">defaultConfig block</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">ndk</span> {
+    abiFilters <span class="str">'x86'</span>, <span class="str">'x86_64'</span>, <span class="str">'armeabi-v7a'</span>, <span class="str">'arm64-v8a'</span>
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- SECTION 5: NDK INTEGRATION         -->
+    <!-- ═══════════════════════════════════ -->
+    <section class="section" id="ndk">
+      <div class="section-label">Section 05</div>
+      <h2><span class="section-num">5</span> NDK Integration</h2>
+      <div class="tags"><span class="tag ndkl">NDK</span><span class="tag java">Java</span><span class="tag kotlin">Kotlin</span></div>
+
+      <p>Use NDK to securely store sensitive credentials (license keys, IDs, passwords) in native C++ code, making them significantly harder to extract through reverse engineering.</p>
+
+      <h3 id="ndk-setup">Setup C++ Module</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Switch to Project View</div>
+            <p>In Android Studio: <strong>Android → Project</strong> → Expand <code>app</code> → Expand <code>src</code> → right-click <code>main</code> → <strong>Add C++ to Module</strong></p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Create CMakeLists.txt</div>
+            <p>Select <strong>Create CMakeLists.txt at the following location</strong> and confirm the path (e.g., <code>app/src/main/cpp</code>). Click <strong>OK</strong>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Open the Generated .cpp File</div>
+            <p>Expand the <code>cpp</code> folder → open the generated <code>.cpp</code> file (e.g., <code>sampleappaar.cpp</code>).</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="ndk-cpp">C++ Implementation</h3>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          <strong>Naming Convention</strong>
+          Replace <code>&lt;your_package_path&gt;_&lt;class_name&gt;</code> with your package path using underscores (e.g., <code>com_example_app_MyClass</code>) for JNI method names. Replace <code>&lt;your/package/path&gt;</code> with slashes for <code>FindClass</code> calls (e.g., <code>com/example/app</code>).
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">sampleappaar.cpp</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="prop">#include</span> <span class="str">&lt;jni.h&gt;</span>
+<span class="prop">#include</span> <span class="str">&lt;string&gt;</span>
+
+<span class="cm">// Add all given credentials from the release document</span>
+std::string packageName       = <span class="str">""</span>;  <span class="cm">// keep package name here</span>
+std::string appName           = <span class="str">""</span>;  <span class="cm">// keep app name here</span>
+std::string channelLicenseKey = <span class="str">""</span>;  <span class="cm">// keep channel licence key here</span>
+std::string clientId          = <span class="str">""</span>;  <span class="cm">// keep client id here</span>
+std::string channelId         = <span class="str">""</span>;  <span class="cm">// keep channel id here</span>
+std::string password          = <span class="str">""</span>;  <span class="cm">// keep password here</span>
+
+<span class="kw">extern "C"</span> JNIEXPORT jstring JNICALL
+<span class="fn">Java_&lt;your_package_path&gt;_&lt;class_name&gt;_appPackageName</span>(JNIEnv *env, jobject) {
+    <span class="kw">return</span> env-&gt;<span class="fn">NewStringUTF</span>(packageName.<span class="fn">c_str</span>());
+}
+
+<span class="kw">extern "C"</span> JNIEXPORT jstring JNICALL
+<span class="fn">Java_&lt;your_package_path&gt;_&lt;class_name&gt;_appName</span>(JNIEnv *env, jobject) {
+    <span class="kw">return</span> env-&gt;<span class="fn">NewStringUTF</span>(appName.<span class="fn">c_str</span>());
+}
+
+<span class="kw">extern "C"</span> JNIEXPORT jstring JNICALL
+<span class="fn">Java_&lt;your_package_path&gt;_&lt;class_name&gt;_channelLicenseKey</span>(JNIEnv *env, jobject) {
+    <span class="kw">return</span> env-&gt;<span class="fn">NewStringUTF</span>(channelLicenseKey.<span class="fn">c_str</span>());
+}
+
+<span class="kw">extern "C"</span> JNIEXPORT jstring JNICALL
+<span class="fn">Java_&lt;your_package_path&gt;_&lt;class_name&gt;_clientId</span>(JNIEnv *env, jobject) {
+    <span class="kw">return</span> env-&gt;<span class="fn">NewStringUTF</span>(clientId.<span class="fn">c_str</span>());
+}
+
+<span class="kw">extern "C"</span> JNIEXPORT jstring JNICALL
+<span class="fn">Java_&lt;your_package_path&gt;_&lt;class_name&gt;_channelId</span>(JNIEnv *env, jobject) {
+    <span class="kw">return</span> env-&gt;<span class="fn">NewStringUTF</span>(channelId.<span class="fn">c_str</span>());
+}
+
+<span class="kw">extern "C"</span> JNIEXPORT jstring JNICALL
+<span class="fn">Java_&lt;your_package_path&gt;_&lt;class_name&gt;_password</span>(JNIEnv *env, jobject) {
+    <span class="kw">return</span> env-&gt;<span class="fn">NewStringUTF</span>(password.<span class="fn">c_str</span>());
+}</code></pre>
+      </div>
+
+      <h3 id="ndk-java">Java — Application Class Binding</h3>
+      <div class="tags"><span class="tag java">Java</span></div>
+
+      <p><strong>Load the NDK library</strong> (the library name must match the project name in <code>CMakeLists.txt</code>):</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Application.java — static block</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">static</span> {
+    <span class="cm">/* parameter passed in System.loadLibrary should match the
+       project name in CMakeLists.txt */</span>
+    <span class="cls">System</span>.<span class="fn">loadLibrary</span>(<span class="str">"sampleappaar"</span>);
+}</code></pre>
+      </div>
+
+      <p><strong>Declare native methods in your class:</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Application.java — native methods</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">public native</span> <span class="cls">String</span> <span class="fn">appName</span>();
+<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">appPackageName</span>();
+<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">channelId</span>();
+<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">channelLicenseKey</span>();
+<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">clientId</span>();
+<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">password</span>();</code></pre>
+      </div>
+
+      <p><strong>Calling the methods:</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java — usage</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>className.<span class="fn">appName</span>();
+className.<span class="fn">appPackageName</span>();
+<span class="cls">Integer</span>.<span class="fn">parseInt</span>(className.<span class="fn">channelId</span>());
+className.<span class="fn">channelLicenseKey</span>();
+<span class="cls">Integer</span>.<span class="fn">parseInt</span>(className.<span class="fn">clientId</span>());
+className.<span class="fn">Password</span>();</code></pre>
+      </div>
+
+      <h3>Kotlin — Application Class Binding</h3>
+      <div class="tags"><span class="tag kotlin">Kotlin</span></div>
+
+      <p><strong>Load the NDK library:</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Application.kt — init block</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="fn">init</span> {
+    <span class="cm">/* parameter passed in System.loadLibrary should match the
+       project name in CMakeLists.txt */</span>
+    <span class="cls">System</span>.<span class="fn">loadLibrary</span>(<span class="str">"sampleappaar"</span>)
+}</code></pre>
+      </div>
+
+      <p><strong>Declare external functions:</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Application.kt — external functions</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">private external fun</span> <span class="fn">appPackageName</span>(): <span class="cls">String</span>
+<span class="kw">private external fun</span> <span class="fn">appName</span>(): <span class="cls">String</span>
+<span class="kw">private external fun</span> <span class="fn">channelLicenseKey</span>(): <span class="cls">String</span>
+<span class="kw">private external fun</span> <span class="fn">clientId</span>(): <span class="cls">String</span>
+<span class="kw">private external fun</span> <span class="fn">channelId</span>(): <span class="cls">String</span>
+<span class="kw">private external fun</span> <span class="fn">password</span>(): <span class="cls">String</span></code></pre>
+      </div>
+
+      <p><strong>Calling the methods:</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Kotlin — usage</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="cls">ClassName</span>.<span class="fn">appPackageName</span>()
+<span class="cls">ClassName</span>.<span class="fn">appName</span>()
+<span class="cls">ClassName</span>.<span class="fn">channelLicenseKey</span>()
+<span class="cls">ClassName</span>.<span class="fn">clientId</span>().<span class="fn">toInt</span>()
+<span class="cls">ClassName</span>.<span class="fn">channelId</span>().<span class="fn">toInt</span>()
+<span class="cls">ClassName</span>.<span class="fn">password</span>()</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          <strong>Singleton Object Class</strong>
+          Create a new <strong>object class</strong> (singleton) in Kotlin/Java to host the NDK loader. The object class must load the native library in its <code>init</code> block and expose the native methods. Then pass these method results when setting <code>ClientInfo</code> in the Application class.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- SECTION 6: REVERSE ENGINEERING     -->
+    <!-- ═══════════════════════════════════ -->
+    <section class="section" id="reverse-engineering">
+      <div class="section-label">Section 06</div>
+      <h2><span class="section-num">6</span> Advanced Reverse Engineering Control</h2>
+
+      <p>This section adds an additional layer of protection by embedding load-check logic in native C++ code that is called from the launcher activity.</p>
+
+      <h3 id="re-ndk">1. Add NDK Methods in .cpp File (Set Launcher Path)</h3>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          <strong>Naming Replacements</strong>
+          <ul style="margin-top:8px">
+            <li>Replace <code>&lt;your_package_path&gt;_&lt;LauncherActivity&gt;</code> with your specific class package path</li>
+            <li>Replace <code>&lt;your_package_path&gt;</code> using format <code>com_example_app</code> for Java method naming</li>
+            <li>Replace <code>&lt;your/package/path&gt;</code> using format <code>com/example/app</code> for FindClass</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">sampleappaar.cpp — Reverse Engineering Control</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">extern "C"</span>
+JNIEXPORT jboolean JNICALL
+<span class="fn">Java_&lt;your_package_path&gt;_&lt;LauncherActivity&gt;_getLoadCheck</span>(JNIEnv *env, jobject thiz) {
+    jclass scanCoreClass = env-&gt;<span class="fn">FindClass</span>(<span class="str">"klo/yui/bnm/NativeInteractor"</span>);
+    jmethodID initScanCore = env-&gt;<span class="fn">GetMethodID</span>(scanCoreClass, <span class="str">"&lt;init&gt;"</span>, <span class="str">"()V"</span>);
+    jobject scanCoreObject = env-&gt;<span class="fn">NewObject</span>(scanCoreClass, initScanCore);
+    jmethodID getMethodID = env-&gt;<span class="fn">GetMethodID</span>(scanCoreClass, <span class="str">"getIslibLoadApp"</span>, <span class="str">"()Z"</span>);
+    jboolean result = env-&gt;<span class="fn">CallBooleanMethod</span>(scanCoreObject, getMethodID);
+    <span class="kw">return</span> result;
+}
+
+<span class="kw">extern "C"</span>
+JNIEXPORT jstring JNICALL
+<span class="fn">Java_&lt;your_package_path&gt;_&lt;LauncherActivity&gt;_close</span>(JNIEnv *env, jobject thiz) {
+    <span class="fn">abort</span>();
+}
+
+<span class="kw">extern "C"</span> <span class="kw">void</span> <span class="fn">Java_&lt;your_package_path&gt;_&lt;LauncherActivity&gt;_getLoggingStatus</span>(
+        JNIEnv* env, jobject obj) {
+    jclass clazz = env-&gt;<span class="fn">FindClass</span>(<span class="str">"your_package_path/Launcher_activity"</span>);
+    jmethodID status = env-&gt;<span class="fn">GetMethodID</span>(clazz, <span class="str">"logStatus"</span>, <span class="str">"()V"</span>);
+    env-&gt;<span class="fn">CallVoidMethod</span>(obj, status);
+}</code></pre>
+      </div>
+
+      <h3>2. Implement the Method in Launcher Activity</h3>
+
+      <div class="tags"><span class="tag java">Java</span></div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">LauncherActivity.java</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">public void</span> <span class="fn">logStatus</span>() {
+    <span class="fn">log</span>(<span class="str">""</span>);
+}
+
+<span class="kw">public void</span> <span class="fn">log</span>(<span class="cls">String</span> str) {
+    <span class="cls">Logger</span>.INSTANCE.<span class="fn">doLogging</span>(<span class="kw">this</span>, <span class="kw">this</span>);
+}
+
+<span class="kw">private native void</span> <span class="fn">getLoggingStatus</span>();</code></pre>
+      </div>
+
+      <div class="tags"><span class="tag kotlin">Kotlin</span></div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">LauncherActivity.kt</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">fun</span> <span class="fn">logStatus</span>() {
+    <span class="fn">log</span>(<span class="str">""</span>)
+}
+
+<span class="kw">fun</span> <span class="fn">log</span>(str: <span class="cls">String</span>) {
+    <span class="cls">Logger</span>.<span class="fn">doLogging</span>(<span class="kw">this</span>, <span class="kw">this</span>)
+}
+
+<span class="kw">private external fun</span> <span class="fn">getLoggingStatus</span>()</code></pre>
+      </div>
+
+      <h3>3. Invoke in onCreate</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">LauncherActivity.java — onCreate</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="ann">@Override</span>
+<span class="kw">protected void</span> <span class="fn">onCreate</span>(<span class="cls">Bundle</span> savedInstanceState) {
+    <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState);
+    <span class="fn">getLoggingStatus</span>();
+}</code></pre>
+      </div>
+
+      <h3>4. Declare Native Methods in Interactor</h3>
+      <p>Declare the following two methods in the native interactor class created during NDK implementation:</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">NativeInteractor.java</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">public native boolean</span> <span class="fn">getLoadCheck</span>();
+<span class="kw">public native void</span> <span class="fn">close</span>();</code></pre>
+      </div>
+
+      <h3 id="re-logging">5. Add Logging in Launcher Activity</h3>
+      <p>Call the following methods inside <code>onResume</code> of the Launcher Activity:</p>
+
+      <div class="tags"><span class="tag java">Java</span></div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">LauncherActivity.java — onResume</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="ann">@Override</span>
+<span class="kw">protected void</span> <span class="fn">onResume</span>() {
+    <span class="cls">LoggingServiceUtil</span>.INSTANCE.<span class="fn">printLog</span>(context, activity);
+    <span class="cls">LogUtil</span>.INSTANCE.<span class="fn">writeLog</span>(<span class="str">"appresumed"</span>);
+    <span class="kw">new</span> <span class="cls">Handler</span>().<span class="fn">postDelayed</span>(() -&gt; {
+        <span class="kw">if</span> (!<span class="fn">getLoadCheck</span>()) {
+            <span class="fn">close</span>();
+        }
+    }, <span class="num">2000</span>);
+}</code></pre>
+      </div>
+
+      <div class="tags"><span class="tag kotlin">Kotlin</span></div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">LauncherActivity.kt — onResume</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code><span class="kw">public override fun</span> <span class="fn">onResume</span>() {
+    <span class="kw">super</span>.<span class="fn">onResume</span>()
+    <span class="cls">LoggingServiceUtil</span>.<span class="fn">printLog</span>(<span class="kw">this</span>, <span class="kw">this</span>)
+    <span class="cls">LogUtil</span>.<span class="fn">doLogging</span>(<span class="kw">this</span>, <span class="kw">this</span>)
+    <span class="kw">if</span> (!<span class="fn">getLoadCheck</span>()) {
+        <span class="cls">LogUtil</span>.<span class="fn">writeLog</span>(<span class="str">"appresumed"</span>)
+        <span class="cls">GlobalScope</span>.<span class="fn">launch</span> {
+            <span class="fn">delay</span>(<span class="num">2000</span>)
+            <span class="kw">if</span> (!<span class="fn">getLoadCheck</span>()) {
+                <span class="fn">close</span>()
+            }
+        }
+    }
+}</code></pre>
+      </div>
+
+      <h3 id="re-proguard">6. ProGuard Rules for Reverse Engineering Control</h3>
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Required ProGuard Rules</strong>
+          These rules ensure ProGuard does not remove or optimize the <code>logStatus</code> method and required SDK classes. Replace <code>&lt;your.package.path&gt;</code> with your actual package (e.g., <code>com.example.app</code>).
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">proguard-rules.pro</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>-keep <span class="kw">class</span> &lt;your.package.path&gt;.&lt;LauncherActivity&gt; {
+    <span class="fn">logStatus</span>();
+}
+-dontoptimize
+-keepattributes Signature
+-keep <span class="kw">class</span> com.google.gson.reflect.TypeToken { *; }
+-keep <span class="kw">class</span> com.google.gson.** { *; }
+-keep <span class="kw">class</span> klo.yui.bnm.NativeInteractor $* {*;}</code></pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 7: ADVANCED THREAT SIGNAL (ATS)    -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="section" id="threat-signals">
+      <div class="section-label">Section 07</div>
+      <h2><span class="section-num">7</span> Advanced Threat Signal (ATS) SDK</h2>
+
+      <p>The Advanced Threat Signal (ATS) SDK for Android collects device integrity signals, packages them securely, and encrypts them end-to-end before transmission to your backend. It is designed to detect tampering, emulation, and bypass attempts at the device level.</p>
+
+      <div class="callout info">
+        <div class="callout-icon">📖</div>
+        <div class="callout-body">
+          <strong>Backend Plugin Integration</strong>
+          The backend Java plugin handles the server-side processing of signals. It decrypts the encrypted signal, validates integrity parameters, returns an <strong>ALLOW / BLOCK</strong> verdict, and integrates with your fraud/risk engine.<br>
+          <a href="https://docu.protectt.ai/appauth/java-integration" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-size:13px;margin-top:6px;display:inline-block;">→ Backend Java Integration Guide: https://docu.protectt.ai/appauth/java-integration</a>
+        </div>
+      </div>
+
+      <p>The FDAnalytics SDK (<code>ai.protectt.sdk.analytics</code>) collects device threat signals, packages them into a compact payload, and encrypts that payload end-to-end. It is the client-side counterpart to the backend Java plugin.</p>
+
+      <h3 id="fdanalytics-requirements">Requirements</h3>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          <strong>Zero External Dependencies</strong>
+          The SDK uses only Android platform APIs and the JDK's built-in <code>javax.crypto</code> / <code>java.security</code> stack — no third-party libraries required.
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Minimum</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Android minSdk</td><td>24 (Android 7.0)</td></tr>
+          <tr><td>compileSdk</td><td>34+</td></tr>
+          <tr><td>Kotlin</td><td>1.9+</td></tr>
+          <tr><td>Java source compatibility</td><td>Java 17</td></tr>
+          <tr><td>Native ABI</td><td>armeabi-v7a, arm64-v8a, x86_64</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="fdanalytics-adding">Adding the SDK</h3>
+      <p>Copy <code>analytics-release.aar</code> into your project's <code>libs/</code> folder, then add the dependency to your build file.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">build.gradle (Java project)</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>dependencies {
+    implementation files("libs/analytics-release.aar")
+}</code></pre>
+      </div>
+
+      <h3 id="fdanalytics-usage">Basic Usage</h3>
+      <div class="tags"><span class="tag java">Java</span></div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java — Basic Usage</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>FDAnalytics sdk = FDAnalytics.getInstance();
+String signal = sdk.getSignal(sessionId, deviceId, timestamp);</code></pre>
+      </div>
+
+      <h3 id="fdanalytics-events">Registering Threat Events</h3>
+      <p>Use <code>AppProtecttInteractor</code> to listen for threat events and forward them to the SDK.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java — Event Registration</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>FDAnalytics sdk = FDAnalytics.getInstance();
+
+AppProtecttInteractor.recevieEventCallback(
+    new AppProtecttInteractorContract.EventNotified() {
+
+        @Override
+        public void onEvents(Response response) {
+            sdk.addOnEvent(response.vulnerabilityCode);
+        }
+
+        @Override
+        public void initEvents(int response) {
+            sdk.addInitEvent(response);
+        }
+    }
+);</code></pre>
+      </div>
+
+      <h4>Event Methods</h4>
+      <table>
+        <thead>
+          <tr><th>Method</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>addOnEvent(int ruleId)</code></td><td>Records a vulnerability event</td></tr>
+          <tr><td><code>addInitEvent(int ruleId)</code></td><td>Records an initialization event</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="fdanalytics-signal">Generating the Signal</h3>
+      <p>Call <code>getSignal()</code> to produce an encrypted signal string, then transmit it to your server.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java — Generate &amp; Send Signal</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>try {
+    FDAnalytics sdk = FDAnalytics.getInstance();
+
+    String signal = sdk.getSignal(
+            "&lt;your-session-id&gt;",
+            "&lt;your-device-id&gt;",
+            "&lt;unix-timestamp-ms&gt;"
+    );
+
+    sendToServer(signal);
+
+} catch (Exception e) {
+    Log.e("FDAnalyticsError", "Error generating encrypted signal", e);
+}</code></pre>
+      </div>
+
+      <h3 id="fdanalytics-transmission">API Transmission &amp; Encoding</h3>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Critical — Base64 Characters</strong>
+          The encrypted signal is standard Base64 and may contain <code>+</code>, <code>/</code>, and <code>=</code> characters. Avoid sending the signal as a raw URL query parameter, as special characters will be mangled by URL encoding.
+        </div>
+      </div>
+
+      <p>Recommended approach — send the signal via a JSON POST body:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — POST Body</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+  "signal": "&lt;encrypted-signal&gt;"
+}</code></pre>
+      </div>
+
+      <h4>Signal Plaintext Format</h4>
+      <p>The decrypted signal follows this structure:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Signal Format</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>&lt;sessionId&gt;#&lt;protecttUUID&gt;#&lt;deviceId&gt;#&lt;threatParams&gt;[#&lt;sessionTimeStamp&gt;]</code></pre>
+      </div>
+
+      <h4>Integration Flow</h4>
+      <p>Follow these steps in order for a complete integration:</p>
+      <ol>
+        <li>Initialize the SDK with the server public key.</li>
+        <li>Register threat event callbacks.</li>
+        <li>Generate an encrypted signal per session.</li>
+        <li>Send the signal via JSON POST.</li>
+        <li>Backend decrypts and validates the signal.</li>
+        <li>Enforce the verdict (<strong>ALLOW</strong> / <strong>BLOCK</strong>) in your app.</li>
+      </ol>
+
+      <h3 id="fdanalytics-security">Security Best Practices</h3>
+
+      <div class="callout danger">
+        <div class="callout-icon">🔒</div>
+        <div class="callout-body">
+          <strong>Follow these guidelines to maintain the integrity of the ATS integration:</strong>
+          <ul style="margin-top:10px">
+            <li>Never expose the private key in the app binary or source code.</li>
+            <li>Rotate server keys periodically to limit exposure from key compromise.</li>
+            <li>Enforce HTTPS with TLS 1.2 or higher on all endpoints.</li>
+            <li>Validate timestamp freshness server-side to prevent replay attacks.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- SECTION 8: BETA UPLOAD             -->
+    <!-- ═══════════════════════════════════ -->
+    <section class="section" id="beta-upload">
+      <div class="section-label">Section 08</div>
+      <h2><span class="section-num">8</span> First-Time BETA Upload to Play Store</h2>
+
+      <p>Follow these steps when uploading your app to the Google Play Store for the first time with AppProtectt integrated.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Add Protectt.ai as Testers</div>
+            <p>Add the following email addresses as testers in the <strong>Internal Testing Channel</strong> on Google Play Console:</p>
+            <ul>
+              <li><code>protectt.ai@gmail.com</code></li>
+              <li><code>protectt.apptesting@gmail.com</code></li>
+            </ul>
+            <div class="callout info" style="margin-top:12px">
+              <div class="callout-icon">ℹ️</div>
+              <div class="callout-body">If signing is managed by Google Play Store, follow additional steps to extract the TrustID of the Google Play Keystore and re-upload in Internal Testing.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Upload Production Build to Internal Beta Channel</div>
+            <p>Upload the production build to the Beta Channel (Internal Testing) on the Google Play Store.</p>
+            <p>During this upload, enable the following LOG in your Application class to extract the TrustID hash value:</p>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-lang">Application.java / .kt</span>
+                <div class="code-dots"><span></span><span></span><span></span></div>
+              </div>
+              <pre><code><span class="cls">Log</span>.<span class="fn">i</span>(<span class="str">"TrustID"</span>, <span class="cls">AppProtecttInteractor</span>.<span class="cls">Companion</span>.<span class="fn">getTrust</span>(<span class="kw">this</span>));</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Trust Value Extraction</div>
+            <p>After the build is available on the Beta Channel, the trust value will be extracted from the log by the Protectt.ai team. This trust value is used for further configuration of the AppProtectt Security solution.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">File Replacement</div>
+            <p>Protectt.ai will share an updated <code>featureprod.png</code> file. Replace it in <code>res/raw/</code> of your Android project. Once updated, <strong>remove the TrustID LOG</strong> used in Step 2.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">Upload the Updated Build</div>
+            <p>Upload the updated build (with <code>featureprod.png</code> replaced and LOG removed) to the Internal Beta Channel on Google Play Store. Keep it accessible briefly to allow the Protectt.ai team to run a sanity test.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- SECTION 9: AAR → MAVEN MIGRATION   -->
+    <!-- ═══════════════════════════════════ -->
+    <section class="section" id="maven-migration">
+      <div class="section-label">Section 09</div>
+      <h2><span class="section-num">9</span> Migrating from AAR File to Maven</h2>
+
+      <p>If your project previously integrated AppProtectt via a local <code>.aar</code> file, follow the steps outlined in the <strong>Dependencies</strong> section (Section 2) to switch to the Maven repository approach.</p>
+
+      <p>Key changes to make when migrating:</p>
+      <ul>
+        <li>Remove any local <code>.aar</code> files from your project's <code>libs</code> folder</li>
+        <li>Remove any <code>flatDir</code> repository entries referencing local libs</li>
+        <li>Add the Protectt.ai Maven repository URL and credentials as described in Section 2</li>
+        <li>Replace local file dependencies with the Maven coordinate: <code>implementation "ai.protectt.sdk:appprotectt:4.5.0"</code></li>
+        <li>Add Maven credentials to <code>local.properties</code> (or directly in the Gradle file for CI/CD)</li>
+        <li>Sync Gradle and verify the build succeeds</li>
+      </ul>
+
+      <div class="callout success">
+        <div class="callout-icon">✅</div>
+        <div class="callout-body">
+          <strong>Migration Complete</strong>
+          Once migrated to Maven, you will automatically receive SDK updates by bumping the version number in your dependency declaration, without needing to manually download and replace <code>.aar</code> files.
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- FOOTER NOTE -->
+    <div style="text-align:center; padding: 20px 0 40px;">
+      <p style="font-size:12px; color:var(--text-subtle);">
+        AppProtectt SDK Integration Guide · Ver 4.7 · 24 October 2025<br>
+        <span style="color:var(--border)">—</span><br>
+        © Protectt.ai Labs Private Limited. Confidential and Proprietary.
+      </p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 7 — SUBSECTION: JAVA BACKEND PLUGIN           -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="section" id="backend-overview">
+      <div class="section-label">Section 7 — Backend Plugin</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">7.1</span> Java Backend Plugin Integration</h2>
+
+      <div class="callout info" style="margin-bottom:20px">
+        <div class="callout-icon">📦</div>
+        <div class="callout-body">
+          <strong>Sub-section of Advanced Threat Signal (ATS)</strong>
+          This section covers the server-side Java plugin that decrypts and validates the encrypted signal token produced by the <a href="#threat-signals" style="color:var(--blue);text-decoration:none;">FDAnalytics Android SDK (Section 7)</a>. Both components must be integrated together for ATS to function end-to-end.
+        </div>
+      </div>
+
+      <p>The Java Backend Plugin is the server-side counterpart to the FDAnalytics Android SDK. It decrypts and validates the encrypted signal token received from the mobile client and returns an <strong>ALLOW</strong> or <strong>BLOCK</strong> verdict for use in your fraud/risk engine.</p>
+
+      <h3 id="backend-overview-detail">1. Overview</h3>
+      <p>The <code>ThreatSignalValidationPlugin</code> is a lightweight Java library designed to validate device integrity and threat parameters. It decodes signal tokens and provides a verdict (<strong>ALLOW</strong> or <strong>BLOCK</strong>) based on real-time security analysis.</p>
+
+      <h3>2. Prerequisites</h3>
+      <div class="prereq-grid">
+        <div class="prereq-card">
+          <div class="prereq-label">Java Version</div>
+          <div class="prereq-value">8+</div>
+        </div>
+        <div class="prereq-card">
+          <div class="prereq-label">Build Tool</div>
+          <div class="prereq-value" style="font-size:13px">Maven or Gradle</div>
+        </div>
+        <div class="prereq-card">
+          <div class="prereq-label">Artifact</div>
+          <div class="prereq-value" style="font-size:11px;color:var(--purple)">threatsignalplugin<br>-0.0.1-SNAPSHOT.jar</div>
+        </div>
+      </div>
+      <p>The artifact must be available in your local repository or private VPC Artifactory.</p>
+    </section>
+
+    <section class="section" id="backend-installation">
+      <div class="section-label">Section 7 — Backend Plugin</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">7.2</span> Installation</h2>
+
+      <h3>A. Add Dependency (Maven)</h3>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">Ensure the version matches the JAR provided by Protectt.ai.</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">pom.xml — Maven Dependency</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;ai.protectt&lt;/groupId&gt;
+    &lt;artifactId&gt;threatsignalplugin&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <h3>B. Import Required Classes</h3>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java — Imports</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>import ai.protectt.threatsignalplugin.controller.ThreatSignalValidationPlugin;
+import ai.protectt.threatsignalplugin.dto.Request;
+import ai.protectt.threatsignalplugin.service.ThreatSignalForwarder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;</code></pre>
+      </div>
+    </section>
+
+    <section class="section" id="backend-implementation">
+      <div class="section-label">Section 7 — Backend Plugin</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">7.3</span> Implementation</h2>
+
+      <h3 id="backend-init">A. Initialize the Plugin</h3>
+      <p>The plugin requires a <code>ThreatSignalForwarder</code> to handle communication with Protectt servers.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java — Plugin Initialization</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>// 1. Initialize the forwarder (handles communication with Protectt servers)
+ThreatSignalForwarder forwarder = new ThreatSignalForwarder();
+
+// 2. Initialize the plugin instance
+ThreatSignalValidationPlugin plugin = new ThreatSignalValidationPlugin(forwarder);</code></pre>
+      </div>
+
+      <h3 id="backend-validate">B. Executing Validation</h3>
+      <p>Pass the JSON request received from the mobile/client side to the plugin.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java — Validation Logic</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>ObjectMapper mapper = new ObjectMapper();
+
+try {
+    // Map the incoming JSON string to the Plugin Request DTO
+    Request req = mapper.readValue(jsonRequest, Request.class);
+
+    // Call the validation logic
+    String private_key = "private_key";
+    Map response = plugin.validate(req, private_key);
+
+    // Process the result
+    System.out.println(
+        "Validation Response: " +
+        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response)
+    );
+} catch (Exception e) {
+    // Handle parsing or connection errors
+    System.err.println("Plugin Integration Error: " + e.getMessage());
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="section" id="backend-api">
+      <div class="section-label">Section 7 — Backend Plugin</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">7.4</span> API Reference</h2>
+
+      <h3>Method</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Method Signature</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>validate(Request reqMsg)</code></pre>
+      </div>
+
+      <h3>Request JSON Example</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — Request</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "clientSessionID": "7941bf89-e600-44",
+    "signalToken": "WzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABExnPVGfhKqJTttW8fTIwRRa2/xu9YN+ZWROJqEXqQK875PHxj98FLTv5ECvc9gvA8DT3omH6dsNltuvp1ZEUgyNR8ErF1BowpRyCaM+MByf4Ei+jGqjbfe/YPb4EYVlah2DbAJnjIKsviwiWFnLlNbDuPwJB7yrQ+XZn53NzxwFQd5+5z2ZvndSiLEpNj/sm28d6nEjUEZNWbr0ak/l6v2lcNnk/RFbpF+Yoob5fE4=",
+    "clientId": "30",
+    "chnId": "3007"
+}</code></pre>
+      </div>
+
+      <h3>Request Fields</h3>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>clientSessionID</code></td><td>String</td><td>Optional</td><td>Unique session ID of the client</td></tr>
+          <tr><td><code>signalToken</code></td><td>String</td><td><strong>Yes</strong></td><td>Encrypted device signal</td></tr>
+          <tr><td><code>clientId</code></td><td>String</td><td>Optional</td><td>ID of the client sending the request</td></tr>
+          <tr><td><code>chnId</code></td><td>String</td><td>Optional</td><td>Channel ID associated with the client</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="backend-responses">
+      <div class="section-label">Section 7 — Backend Plugin</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">7.5</span> Plugin Response Structure</h2>
+
+      <h3>A. Valid Device — <code>P000</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — ALLOW Response</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "action": "ALLOW",
+    "reason": "Valid device and environment",
+    "code": "P000",
+    "pbid": "8558C8D4AAB44916A82F93334476CC1C",
+    "sessionId": "7941bf89-e600-44",
+    "deviceId": "d9755dc682f01860",
+    "timestamp": "1769666538079"
+}</code></pre>
+      </div>
+
+      <h3>B. Invalid or Tampered Signal — <code>P001</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — BLOCK P001</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "action": "BLOCK",
+    "reason": "Invalid or tampered signal token",
+    "code": "P001"
+}</code></pre>
+      </div>
+
+      <h3>C. Unexpected Internal Error — <code>P002</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — BLOCK P002</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "action": "BLOCK",
+    "reason": "Unexpected error during validation: ",
+    "code": "P002"
+}</code></pre>
+      </div>
+
+      <h3>D. Protectt Server Rejected — <code>P003</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — BLOCK P003</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "action": "BLOCK",
+    "reason": "Protectt server rejected validation",
+    "code": "P003"
+}</code></pre>
+      </div>
+
+      <h3>E. Rule Bypass Detected — <code>P004</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — BLOCK P004</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "reason": "Anomalies detected in device parameters",
+    "code": "P004",
+    "action": "BLOCK",
+    "ruleIds": [
+        "45"
+    ],
+    "pbid": "8558C8D4AAB44916A82F93334476CC1C",
+    "sessionId": "7941bf89-e600-44",
+    "deviceId": "d9755dc682f01860",
+    "timestamp": "1769666538079"
+}</code></pre>
+      </div>
+
+      <h3>F. Device Blacklisted — <code>P005</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — BLOCK P005</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "reason": "Device is already Blacklisted (with indicator B)",
+    "code": "P005",
+    "action": "BLOCK",
+    "pbid": "8558C8D4AAB44916A82F93334476CC1C",
+    "sessionId": "7941bf89-e600-44",
+    "deviceId": "d9755dc682f01860",
+    "timestamp": "1769666538079"
+}</code></pre>
+      </div>
+
+      <h3>G. Locally Generated Pbid — <code>P006</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — ALLOW P006</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "reason": "Valid device and environment|Locally Generated Pbid",
+    "code": "P006",
+    "action": "ALLOW",
+    "pbid": "00000000000000000000000000000000",
+    "sessionid": "7941bf89-e600-44",
+    "deviceid": "d9755dc682f01860",
+    "timestamp": "1769666538079"
+}</code></pre>
+      </div>
+
+      <h3>H. SessionId Mismatch — <code>P007</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — BLOCK P007</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "reason": "SessionId MissMatch",
+    "code": "P007",
+    "action": "BLOCK",
+    "pbid": "8558C8D4AAB44916A82F93334476CC1C",
+    "sessionId": "7941bf89-e600-44",
+    "deviceid": "d9755dc682f01860",
+    "timestamp": "1769666538079"
+}</code></pre>
+      </div>
+
+      <h4>Response Code Summary</h4>
+      <table>
+        <thead>
+          <tr><th>Code</th><th>Action</th><th>Reason</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>P000</code></td><td><span style="color:var(--green);font-weight:700">ALLOW</span></td><td>Valid device and environment</td></tr>
+          <tr><td><code>P001</code></td><td><span style="color:var(--accent);font-weight:700">BLOCK</span></td><td>Invalid or tampered signal token</td></tr>
+          <tr><td><code>P002</code></td><td><span style="color:var(--accent);font-weight:700">BLOCK</span></td><td>Unexpected internal error</td></tr>
+          <tr><td><code>P003</code></td><td><span style="color:var(--accent);font-weight:700">BLOCK</span></td><td>Protectt server rejected validation</td></tr>
+          <tr><td><code>P004</code></td><td><span style="color:var(--accent);font-weight:700">BLOCK</span></td><td>Anomalies / rule bypass detected</td></tr>
+          <tr><td><code>P005</code></td><td><span style="color:var(--accent);font-weight:700">BLOCK</span></td><td>Device already blacklisted</td></tr>
+          <tr><td><code>P006</code></td><td><span style="color:var(--green);font-weight:700">ALLOW</span></td><td>Valid device — locally generated Pbid</td></tr>
+          <tr><td><code>P007</code></td><td><span style="color:var(--accent);font-weight:700">BLOCK</span></td><td>SessionId mismatch</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="backend-flow">
+      <div class="section-label">Section 7 — Backend Plugin</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">7.6</span> Integration Flow</h2>
+
+      <h3>1. Frontend / Client</h3>
+      <ul>
+        <li>Sends request with <code>clientSessionID</code> and <code>signalToken</code></li>
+        <li><code>signalToken</code> contains encrypted data: <code>(SessionId#Pbid#DeviceId#ThreatParams#SessionTimestamp)</code></li>
+      </ul>
+
+      <h3>2. Plugin Validation</h3>
+      <p>The plugin checks required fields (<code>clientSessionID</code>, <code>signalToken</code>, <code>clientId</code>, <code>chnId</code>), decodes the <code>signalToken</code> to extract <code>pbid</code>, <code>deviceId</code>, and <code>threatParams</code>, then returns a preliminary decision:</p>
+      <ul>
+        <li><strong>BLOCK</strong> if the signal is invalid</li>
+        <li><strong>ALLOW</strong> if the signal is valid</li>
+      </ul>
+
+      <h3>3. Session Verification</h3>
+      <p>Once <code>plugin.validate(req)</code> returns a successful response, you must verify:</p>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Session Match</strong> — Ensure <code>response.get("sessionId")</code> matches the session stored in your backend.<br><br>
+          <strong>Time TTL Verification</strong> — Compare the <code>timestamp</code> from the response with your server's current timestamp. Reject the signal if the difference exceeds 5 minutes (300,000 ms) to prevent replay attacks.
+        </div>
+      </div>
+
+      <h3>4. Plugin Forwarding</h3>
+      <p>The plugin forwards the decoded signal to the Protectt server endpoint <code>/threat/validateplugin</code>. The server performs additional checks including device blacklist status, then returns <strong>ALLOW</strong> or <strong>BLOCK</strong> with a reason.</p>
+
+      <h3>5. Plugin Final Decision</h3>
+      <p>The plugin combines local validation and Protectt server response, blocks and blacklists the device if the server returns BLOCK, and returns the final JSON (<code>action</code>, <code>reason</code>, <code>code</code>, <code>pbid</code>, <code>sessionId</code>, <code>deviceId</code>, <code>timestamp</code>) to the frontend.</p>
+    </section>
+
+    <section class="section" id="backend-sample">
+      <div class="section-label">Section 7 — Backend Plugin</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">7.7</span> Sample Input and Output</h2>
+
+      <h3>Input</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — Sample Input</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "clientSessionID": "7941bf89-e600-44",
+    "signalToken": "WzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABExnPVGfhKqJTttW8fTIwRRa2/xu9YN+ZWROJqEXqQK875PHxj98FLTv5ECvc9gvA8DT3omH6dsNltuvp1ZEUgyNR8ErF1BowpRyCaM+MByf4Ei+jGqjbfe/YPb4EYVlah2DbAJnjIKsviwiWFnLlNbDuPwJB7yrQ+XZn53NzxwFQd5+5z2ZvndSiLEpNj/sm28d6nEjUEZNWbr0ak/l6v2lcNnk/RFbpF+Yoob5fE4=",
+    "clientId": "30",
+    "chnId": "3007"
+}</code></pre>
+      </div>
+
+      <h3>Output</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JSON — Sample Output</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>{
+    "reason": "Anomalies detected in device parameters",
+    "ruleIds": ["45"],
+    "code": "P004",
+    "action": "BLOCK",
+    "pbid": "8558C8D4AAB44916A82F93334476CC1C",
+    "sessionId": "7941bf89-e600-44",
+    "deviceId": "d9755dc682f01860",
+    "timestamp": "1769666538079"
+}</code></pre>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- SECTION 12: UPI FRAUD PREVENTION GUIDELINES        -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <hr>
+    <section class="section" id="upi-fraud-prevention">
+      <div class="section-label">Section 12</div>
+      <h2><span class="section-num">12</span> UPI Fraud Prevention Guidelines</h2>
+
+      <p>This section outlines a layered defence strategy for UPI-enabled Android applications. Each layer independently reduces fraud surface area; combined, they provide defence-in-depth against the most common attack vectors targeting mobile payment flows.</p>
+
+      <div class="callout danger">
+        <div class="callout-icon">🔒</div>
+        <div class="callout-body">
+          <strong>Mandatory for Financial Apps</strong>
+          All four controls below should be treated as non-optional for any application that initiates, authorises, or displays UPI payment flows. Omitting any single layer substantially increases the risk of successful fraud.
+        </div>
+      </div>
+    </section>
+
+    <!-- 13.1 AUTO PLAY PROTECTION -->
+    <section class="section" id="upi-play-protection">
+      <div class="section-label">Section 12.1</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.1</span> Enable Auto Play Protection</h2>
+
+      <p>Ensure your app is protected against tampering, repackaging, and distribution from untrusted sources. Apps distributed through side-loading bypass Google Play's automated malware scanning and integrity verification, leaving users exposed to trojans and credential-harvesting overlays.</p>
+
+      <h3>Key Actions</h3>
+      <ul>
+        <li>Enable Auto Play Protection from Google Play Console</li>
+        <li>Restrict app usage if installed from unknown or unofficial sources</li>
+        <li>Detect and block sideloaded or modified APKs at runtime</li>
+      </ul>
+
+      <h3 id="upi-play-protection-steps">Steps to Enable</h3>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Log in to Google Play Console</div>
+            <p>Navigate to <a href="https://play.google.com/console" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;">play.google.com/console</a> and select your application.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Open App Integrity Settings</div>
+            <p>Go to <strong>Setup → App Integrity</strong> (or the <em>App Signing &amp; Protection</em> section, depending on your console version).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Enable Automatic Protection &amp; Play App Signing</div>
+            <p>Toggle on <strong>Automatic Protection</strong> and <strong>Play App Signing</strong> as applicable for your release track.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Configure Enforcement Rules</div>
+            <p>Set enforcement rules to <strong>block</strong> the app if not installed via the Play Store, and to <strong>restrict usage</strong> on tampered or repackaged builds.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Benefits</h3>
+      <div class="prereq-grid" style="margin-top:4px;">
+        <div class="prereq-card">
+          <div class="prereq-label">Anti-Repackaging</div>
+          <div class="prereq-value" style="font-size:12px;color:var(--green)">Prevents redistribution</div>
+        </div>
+        <div class="prereq-card">
+          <div class="prereq-label">Source Enforcement</div>
+          <div class="prereq-value" style="font-size:12px;color:var(--green)">Play Store only</div>
+        </div>
+        <div class="prereq-card">
+          <div class="prereq-label">Malware APK Block</div>
+          <div class="prereq-value" style="font-size:12px;color:var(--green)">Injected APKs blocked</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13.2 PLAY INTEGRITY API -->
+    <section class="section" id="upi-play-integrity">
+      <div class="section-label">Section 12.2</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.2</span> Implement Play Integrity API</h2>
+
+      <p>The <strong>Google Play Integrity API</strong> provides a cryptographically signed integrity verdict that your backend can verify before completing any sensitive operation. Unlike client-side checks, which can be bypassed by a motivated attacker, backend verification of the integrity token is significantly harder to circumvent.</p>
+
+      <h3>Purpose</h3>
+      <ul>
+        <li>Detect rooted or compromised devices before allowing transactions</li>
+        <li>Ensure the app binary is the one published to the Play Store</li>
+        <li>Prevent usage of tampered, cloned, or instrumented apps</li>
+      </ul>
+
+      <h3>Integration Flow</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Play Integrity — High-Level Flow</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>// 1. Request an integrity token from Google
+IntegrityTokenRequest request = IntegrityTokenRequest.builder()
+        .setNonce(generateNonce())          // server-generated nonce
+        .build();
+
+IntegrityManager integrityManager =
+        IntegrityManagerFactory.create(applicationContext);
+
+integrityManager.requestIntegrityToken(request)
+        .addOnSuccessListener(response -&gt; {
+            String token = response.token();
+            // 2. Send token to your backend for verification
+            sendToBackend(token);
+        })
+        .addOnFailureListener(e -&gt; {
+            // Handle failure — treat as high-risk
+        });</code></pre>
+      </div>
+
+      <h3>Best Practices</h3>
+      <ul>
+        <li>Always validate the integrity token on the <strong>backend</strong> — never trust client-side results alone</li>
+        <li>Enforce checks at <strong>login</strong>, <strong>OTP verification</strong>, and <strong>every transaction initiation</strong></li>
+        <li>Use a <strong>fresh server-generated nonce</strong> per request to prevent token replay</li>
+        <li>Block or flag devices with a <code>MEETS_BASIC_INTEGRITY = false</code> verdict</li>
+        <li>Log and alert on unusually high volumes of integrity failures from a single device ID</li>
+      </ul>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Nonce Replay Prevention</strong>
+          Generate the nonce server-side per request and verify it has not been used before. Reusing nonces allows an attacker to replay a previously obtained valid token against multiple transactions.
+        </div>
+      </div>
+    </section>
+
+    <!-- 13.3 ATS -->
+    <section class="section" id="upi-ats">
+      <div class="section-label">Section 12.3</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.3</span> Enable Advanced Threat Signaling (ATS)</h2>
+
+      <p>Advanced Threat Signaling provides continuous, real-time device integrity monitoring throughout the user session — not just at app launch. Where Play Integrity gives a point-in-time verdict, ATS tracks threat events as they evolve (e.g., a root tool being activated mid-session) and surfaces them to your backend for dynamic risk scoring.</p>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          <strong>Implementation Reference</strong>
+          ATS integration is fully documented in <a href="#threat-signals" style="color:var(--blue);text-decoration:none;">Section 7 — Advanced Threat Signal (ATS) SDK</a> (including the <a href="#backend-overview" style="color:var(--blue);text-decoration:none;">Java Backend Plugin sub-section 7.1–7.7</a>) above. Refer to those sections for the complete SDK setup, event registration, signal generation, and server-side validation flow.
+        </div>
+      </div>
+
+      <h3>Coverage Checkpoints</h3>
+      <p>Ensure ATS signals are collected and validated at all critical touchpoints:</p>
+
+      <table>
+        <thead>
+          <tr><th>Touchpoint</th><th>ATS Action</th><th>Recommended Verdict Enforcement</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>App Launch / Onboarding</td><td>Collect initial signal</td><td>Block if BLOCK verdict received</td></tr>
+          <tr><td>Login / Authentication</td><td>Refresh signal per session</td><td>Deny login on anomaly detection</td></tr>
+          <tr><td>OTP Entry</td><td>Validate device continuity</td><td>Flag session for step-up auth</td></tr>
+          <tr><td>UPI Transaction Initiation</td><td>Generate fresh encrypted signal</td><td>Hard block on BLOCK verdict</td></tr>
+          <tr><td>High-value Transfer</td><td>Re-validate before authorisation</td><td>Require additional factor + block on BLOCK</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Why ATS Complements Play Integrity</h3>
+      <ul>
+        <li><strong>Session-level coverage</strong> — Play Integrity is checked once; ATS monitors continuously</li>
+        <li><strong>Custom threat rules</strong> — ATS exposes granular rule IDs (e.g., overlay detected, accessibility abuse) for fine-grained risk logic</li>
+        <li><strong>Backend-verified encryption</strong> — signals are end-to-end encrypted and validated server-side, preventing client tampering</li>
+        <li><strong>Replay protection</strong> — signal includes a session timestamp verified by the backend plugin</li>
+      </ul>
+    </section>
+
+    <!-- 13.4 ENCRYPTION -->
+    <section class="section" id="upi-encryption">
+      <div class="section-label">Section 12.4</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">12.4</span> Encrypt All Requests and Responses</h2>
+
+      <p>Transport-layer security alone is not sufficient for financial applications. Payload-level encryption ensures that even if TLS is terminated by a proxy or the device's certificate trust store has been manipulated, sensitive data remains protected.</p>
+
+      <h3>Key Measures</h3>
+      <ul>
+        <li>Enforce <strong>HTTPS with TLS 1.2 minimum</strong> (prefer TLS 1.3) on all API endpoints — reject downgrades</li>
+        <li>Implement <strong>Certificate Pinning</strong> to prevent MITM via rogue CAs or user-installed certificates</li>
+        <li>Apply <strong>payload-level encryption</strong> (e.g., AES-256-GCM) on sensitive request/response bodies — device signals, account numbers, UPI VPAs</li>
+        <li>Use <strong>ephemeral session keys</strong> derived per transaction to limit blast radius of key compromise</li>
+        <li>Never store sensitive data (credentials, tokens, UPI PIN) in <code>SharedPreferences</code>, local databases, or logs in plaintext</li>
+        <li>Apply <strong>Android Keystore</strong> for storing cryptographic keys — keys never leave the secure hardware enclave</li>
+      </ul>
+
+      <h3>Certificate Pinning — Quick Reference</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">res/xml/network_security_config.xml</span>
+          <div class="code-dots"><span></span><span></span><span></span></div>
+        </div>
+        <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;network-security-config&gt;
+    &lt;domain-config cleartextTrafficPermitted="false"&gt;
+        &lt;domain includeSubdomains="true"&gt;api.yourbank.com&lt;/domain&gt;
+        &lt;pin-set expiration="2026-01-01"&gt;
+            &lt;!-- Primary public key pin (SHA-256, Base64) --&gt;
+            &lt;pin digest="SHA-256"&gt;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=&lt;/pin&gt;
+            &lt;!-- Backup pin (rotate before primary expires) --&gt;
+            &lt;pin digest="SHA-256"&gt;BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=&lt;/pin&gt;
+        &lt;/pin-set&gt;
+    &lt;/domain-config&gt;
+&lt;/network-security-config&gt;</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          Reference this config in <code>AndroidManifest.xml</code> via <code>android:networkSecurityConfig="@xml/network_security_config"</code> on the <code>&lt;application&gt;</code> tag. Always maintain a backup pin and rotate before the <code>expiration</code> date to avoid locking out users.
+        </div>
+      </div>
+
+      <h3>Benefits</h3>
+      <table>
+        <thead>
+          <tr><th>Threat</th><th>Mitigation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Man-in-the-Middle (MITM)</td><td>Certificate pinning + TLS enforcement</td></tr>
+          <tr><td>Credential harvesting via proxy</td><td>Payload-level encryption</td></tr>
+          <tr><td>Key extraction from device storage</td><td>Android Keystore (hardware-backed)</td></tr>
+          <tr><td>Replay of captured payloads</td><td>Ephemeral session keys + timestamp validation</td></tr>
+          <tr><td>Log / crash-dump leakage</td><td>No plaintext sensitive data in logs or storage</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout danger">
+        <div class="callout-icon">🔒</div>
+        <div class="callout-body">
+          <strong>Defence-in-Depth Summary</strong>
+          No single control eliminates fraud risk entirely. The combination of <strong>Auto Play Protection</strong> (distribution integrity) + <strong>Play Integrity API</strong> (device &amp; app attestation) + <strong>Advanced Threat Signaling</strong> (continuous session monitoring) + <strong>End-to-End Encryption</strong> (data-in-transit protection) provides layered coverage that raises the cost of attack to a level that deters all but the most sophisticated threat actors.
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- SECTION 13: APPPROTECTT PLUGIN INTEGRATION GUIDE           -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section class="section" id="plugin-overview">
+      <div class="section-label">Section 13</div>
+      <h2><span class="section-num">13</span> AppProtectt Plugin Integration Guide</h2>
+
+      <p>The AppProtectt Gradle Plugin automates SDK integration by injecting all required code hooks, UI assets, and entry points through simple Gradle tasks. This is the <strong>fastest path to integration</strong> — instead of manually performing steps 1–6, the plugin handles it all in one command.</p>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          <strong>Plugin vs Manual Integration</strong>
+          The Gradle plugin automates the code injection described in Sections 1–6 of this guide. Use it for new integrations. For heavily customised builds or hybrid frameworks with unusual configurations, manual integration remains the definitive reference.
+        </div>
+      </div>
+
+      <h3>What does the plugin inject?</h3>
+      <table>
+        <thead><tr><th>What</th><th>Equivalent Manual Step</th><th>Plugin Task</th></tr></thead>
+        <tbody>
+          <tr><td>SDK dependency &amp; Maven repo</td><td>Section 2 — Dependencies</td><td><code>AppProtectSDKInjector</code></td></tr>
+          <tr><td>Application class init code</td><td>Section 3 — SDK Initialization</td><td><code>AppProtectSDKInjector</code></td></tr>
+          <tr><td>Bottom Sheet / Alert UI resources</td><td>Section 2 — Resource Files</td><td><code>injectBottomSheetUI</code></td></tr>
+          <tr><td>Logger / LogUtils / LoggingService hooks</td><td>Section 6 — Reverse Engineering</td><td><code>entrypointInjector</code></td></tr>
+          <tr><td>Flutter custom style XML</td><td>Section 3 — Flutter Style</td><td>Enabled via <code>enableCustomStyle</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Integration Steps at a Glance</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-left"><div class="timeline-num">1</div><div class="timeline-line"></div></div>
+          <div class="timeline-body"><div class="timeline-title">Add Maven repo &amp; classpath to project-level Gradle <span class="variant-pill both">Groovy / KTS</span></div><div class="timeline-desc">Register the Protectt.ai Maven repository and the plugin classpath dependency in the <code>buildscript</code> block.</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-left"><div class="timeline-num">2</div><div class="timeline-line"></div></div>
+          <div class="timeline-body"><div class="timeline-title">Apply plugin in app-level Gradle <span class="variant-pill both">Groovy / KTS</span></div><div class="timeline-desc">Apply <code>ai.protectt.plugin.AppProtecttInjector</code> after the <code>plugins {}</code> block.</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-left"><div class="timeline-num">3</div><div class="timeline-line"></div></div>
+          <div class="timeline-body"><div class="timeline-title">Run Gradle injection tasks</div><div class="timeline-desc">Execute <code>AppProtectSDKInjector</code> to inject the full SDK, plus optional tasks as needed.</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-left"><div class="timeline-num">4</div><div class="timeline-line"></div></div>
+          <div class="timeline-body"><div class="timeline-title">Configure entry point exclusions <span class="variant-pill both">Optional</span></div><div class="timeline-desc">Exclude specific activities from entry-point injection using the <code>entryPoint</code> block.</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-left"><div class="timeline-num">5</div><div class="timeline-line"></div></div>
+          <div class="timeline-body"><div class="timeline-title">Enable custom styles for Flutter <span class="variant-pill both">Flutter only</span></div><div class="timeline-desc">Set <code>enableCustomStyle = true</code> to inject the alert dialog XML style resource.</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-left"><div class="timeline-num">6</div><div class="timeline-line"></div></div>
+          <div class="timeline-body"><div class="timeline-title">Post-injection manual steps</div><div class="timeline-desc">Add channel credentials, feature files, and trust configuration — the plugin cannot fill in your app-specific values.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STEP 1 ── -->
+    <section class="section" id="plugin-step1">
+      <div class="section-label">Section 13 — Step 1</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">13.1</span> Project-Level Gradle — Add Maven Repo &amp; Classpath</h2>
+
+      <p>Open your <strong>project-level</strong> Gradle file and add the <code>buildscript</code> block. If <code>buildscript</code> already exists, merge only the <code>maven</code> repository and <code>classpath</code> entries into it.</p>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Placement — <code>buildscript</code> must come before <code>plugins {}</code></strong><br>
+          Gradle evaluates <code>buildscript</code> blocks before the rest of the build file. If it appears after <code>plugins {}</code>, the classpath will not be resolved and the build will fail.
+        </div>
+      </div>
+
+      <div class="tab-group" id="plugin-step1-groovy">
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="s1-groovy">build.gradle &nbsp;<span class="variant-pill groovy">Groovy</span></button>
+          <button class="tab-btn kts" data-tab="s1-kts">build.gradle.kts &nbsp;<span class="variant-pill kts">Kotlin DSL</span></button>
+        </div>
+        <div class="tab-pane active" data-tab="s1-groovy">
+          <pre><code>// build.gradle (project level) — place BEFORE plugins {}
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://package.protectt.ai/repository/ai-protectt-plugin-appprotectt-injector/"
+            credentials {
+                username = findProperty("protecttUser") ?: "customer@protectt.ai"
+                password = findProperty("protecttPass") ?: "7TKq7=8ozI(XI2(d"
+            }
+        }
+    }
+    dependencies {
+        classpath "ai.protectt.plugin:app-protectt-plugin:1.0.0-beta"
+    }
+}
+
+// existing plugins block follows below
+plugins {
+    id 'com.android.application' version '8.1.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+}</code></pre>
+        </div>
+        <div class="tab-pane" data-tab="s1-kts">
+          <pre><code>// build.gradle.kts (project level) — place BEFORE plugins {}
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://package.protectt.ai/repository/ai-protectt-plugin-appprotectt-injector/")
+            credentials {
+                username = findProperty("protecttUser") as String? ?: "customer@protectt.ai"
+                password = findProperty("protecttPass") as String? ?: "7TKq7=8ozI(XI2(d"
+            }
+        }
+    }
+    dependencies {
+        classpath("ai.protectt.plugin:app-protectt-plugin:1.0.0-beta")
+    }
+}
+
+// existing plugins block follows below
+plugins {
+    id("com.android.application") version "8.1.0" apply false
+    id("org.jetbrains.kotlin.android") version "1.9.0" apply false
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>Secure credential handling</strong> — Store Maven credentials in <code>local.properties</code> (never commit to Git) and read them via <code>findProperty()</code>. For CI/CD pipelines, inject them as environment variables or secret store references instead of hardcoding.<br><br>
+          Add to <code>local.properties</code>:<br>
+          <code>protecttUser=customer@protectt.ai</code><br>
+          <code>protecttPass=7TKq7=8ozI(XI2(d</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STEP 2 ── -->
+    <section class="section" id="plugin-step2">
+      <div class="section-label">Section 13 — Step 2</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">13.2</span> App-Level Gradle — Apply the Plugin</h2>
+
+      <p>Open your <strong>app-level</strong> Gradle file. The plugin must be applied using the legacy <code>apply</code> syntax <em>after</em> the <code>plugins {}</code> block, because the classpath is registered in <code>buildscript</code> (not in the new plugin DSL).</p>
+
+      <div class="tab-group" id="plugin-step2-groovy">
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="s2-groovy">build.gradle &nbsp;<span class="variant-pill groovy">Groovy</span></button>
+          <button class="tab-btn kts" data-tab="s2-kts">build.gradle.kts &nbsp;<span class="variant-pill kts">Kotlin DSL</span></button>
+        </div>
+        <div class="tab-pane active" data-tab="s2-groovy">
+          <pre><code>// app/build.gradle
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    // ... your existing plugins
+}
+
+// Apply AppProtectt plugin AFTER the plugins {} block
+apply plugin: 'ai.protectt.plugin.AppProtecttInjector'</code></pre>
+        </div>
+        <div class="tab-pane" data-tab="s2-kts">
+          <pre><code>// app/build.gradle.kts
+
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    // ... your existing plugins
+}
+
+// Apply AppProtectt plugin AFTER the plugins {} block
+apply(plugin = "ai.protectt.plugin.AppProtecttInjector")</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STEP 3 ── -->
+    <section class="section" id="plugin-step3">
+      <div class="section-label">Section 13 — Step 3</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">13.3</span> Run Gradle Injection Tasks</h2>
+
+      <p>After syncing Gradle, the following tasks are available in your project. Run them from the <strong>Gradle panel</strong> in Android Studio or the terminal.</p>
+
+      <table>
+        <thead>
+          <tr><th>Task Name</th><th>What it injects</th><th>When to run</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>AppProtectSDKInjector</code></td>
+            <td>Full SDK integration — all steps from this guide (dependency, init code, manifest entries, NDK config)</td>
+            <td><strong>Always — run first</strong></td>
+          </tr>
+          <tr>
+            <td><code>injectBottomSheetUI</code></td>
+            <td>Default Bottom Sheet UI layout XML and drawable assets into <code>res/</code></td>
+            <td>Optional — if using Bottom Sheet dialog mode</td>
+          </tr>
+          <tr>
+            <td><code>entrypointInjector</code></td>
+            <td>Advanced entry points: <code>Logger</code>, <code>LogUtils</code>, <code>LoggingService</code> hooks in all Activities</td>
+            <td>Optional — required for Reverse Engineering Control (Section 6)</td>
+          </tr>
+          <tr>
+            <td><code>entrypointRemover</code></td>
+            <td>Removes all entry points previously injected by <code>entrypointInjector</code></td>
+            <td>Optional — use to roll back entry point injection</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tab-group">
+        <div class="tab-bar">
+          <button class="tab-btn terminal active" data-tab="s3-terminal">Terminal</button>
+          <button class="tab-btn groovy" data-tab="s3-studio">Android Studio</button>
+        </div>
+        <div class="tab-pane active" data-tab="s3-terminal">
+          <pre><code># ── Run from project root ──
+
+# Step 1: Inject the full SDK integration (always run this first)
+./gradlew AppProtectSDKInjector
+
+# Step 2 (optional): Inject Bottom Sheet UI resources
+./gradlew injectBottomSheetUI
+
+# Step 3 (optional): Inject Reverse Engineering entry points
+./gradlew entrypointInjector
+
+# To undo entry point injection
+./gradlew entrypointRemover</code></pre>
+        </div>
+        <div class="tab-pane" data-tab="s3-studio">
+          <pre><code>// In Android Studio:
+// 1. Open the Gradle panel  (View → Tool Windows → Gradle)
+// 2. Expand:  YourApp → Tasks → appprotectt
+// 3. Double-click the task to run it:
+//    • AppProtectSDKInjector
+//    • injectBottomSheetUI        (optional)
+//    • entrypointInjector         (optional)
+//    • entrypointRemover          (optional)</code></pre>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          All tasks are <strong>idempotent</strong> — running them multiple times will not duplicate injected code. Always run <code>AppProtectSDKInjector</code> first on a fresh project before using any other task.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STEP 4 ── -->
+    <section class="section" id="plugin-step4">
+      <div class="section-label">Section 13 — Step 4 (Optional)</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">13.4</span> Configure Entry Point Exclusions <span class="tag optional">optional</span></h2>
+
+      <p>By default, <code>entrypointInjector</code> adds hooks to every <code>Activity</code> in your project. To exclude specific activities (e.g., a <code>SplashActivity</code> that runs before the SDK is initialised), add the <code>entryPoint</code> block <em>before</em> the <code>android {}</code> block.</p>
+
+      <div class="tab-group" id="plugin-step4-groovy">
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="s4-groovy">build.gradle &nbsp;<span class="variant-pill groovy">Groovy</span></button>
+          <button class="tab-btn kts" data-tab="s4-kts">build.gradle.kts &nbsp;<span class="variant-pill kts">Kotlin DSL</span></button>
+        </div>
+        <div class="tab-pane active" data-tab="s4-groovy">
+          <pre><code>// app/build.gradle — place this BEFORE the android {} block
+
+entryPoint {
+    onlyActivity = true   // inject only into Activity classes (skip Services, Fragments)
+    exclusions = ["SplashActivity", "HomeScreen", "MainActivity"]
+}
+
+android {
+    // ... your existing android config
+}</code></pre>
+        </div>
+        <div class="tab-pane" data-tab="s4-kts">
+          <pre><code>// app/build.gradle.kts — place this BEFORE the android {} block
+
+configure&lt;ai.protectt.plugin.EntryPointExtension&gt; {
+    onlyActivity = true   // inject only into Activity classes (skip Services, Fragments)
+    exclusions = listOf("SplashActivity", "HomeScreen", "MainActivity")
+}
+
+android {
+    // ... your existing android config
+}</code></pre>
+        </div>
+      </div>
+
+      <h4>entryPoint Configuration Properties</h4>
+      <table>
+        <thead>
+          <tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>onlyActivity</code></td>
+            <td><code>Boolean</code></td>
+            <td><code>false</code></td>
+            <td>When <code>true</code>, restricts injection to <code>Activity</code> subclasses only — Fragments, Services, and BroadcastReceivers are skipped</td>
+          </tr>
+          <tr>
+            <td><code>exclusions</code></td>
+            <td><code>List&lt;String&gt;</code></td>
+            <td><code>[]</code></td>
+            <td>Simple class names (without package path) of Activities to skip. Use the exact class name as it appears in your source file.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── STEP 5 ── -->
+    <section class="section" id="plugin-step5">
+      <div class="section-label">Section 13 — Step 5 (Flutter only)</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">13.5</span> Enable Custom Styles <span class="tag optional">Flutter only</span></h2>
+
+      <p>For <strong>Flutter projects</strong>, the plugin can generate the <code>AlertDialogCustom</code> XML style resource automatically. Enable it by setting <code>enableCustomStyle</code> in your app-level Gradle. The generated style is then passed as the style parameter in <code>initAppProtectt()</code>.</p>
+
+      <div class="tab-group" id="plugin-step5-groovy">
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="s5-groovy">build.gradle &nbsp;<span class="variant-pill groovy">Groovy</span></button>
+          <button class="tab-btn kts" data-tab="s5-kts">build.gradle.kts &nbsp;<span class="variant-pill kts">Kotlin DSL</span></button>
+        </div>
+        <div class="tab-pane active" data-tab="s5-groovy">
+          <pre><code>// app/build.gradle — add anywhere in the file (top level, outside android {})
+
+ext {
+    enableCustomStyle = true
+}</code></pre>
+        </div>
+        <div class="tab-pane" data-tab="s5-kts">
+          <pre><code>// app/build.gradle.kts — add anywhere in the file (top level, outside android {})
+
+extra["enableCustomStyle"] = true</code></pre>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div class="callout-body">
+          Native Android (Java/Kotlin) apps do not need this flag — the <code>AlertDialogCustom</code> style is added manually as described in <a href="#flutter-style" style="color:var(--blue);text-decoration:none;">Section 3 — Flutter Framework Style</a>. Enabling it in a non-Flutter project has no effect.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STEP 6 ── -->
+    <section class="section" id="plugin-step6">
+      <div class="section-label">Section 13 — Step 6</div>
+      <h2><span class="section-num" style="background:var(--accent-dark)">13.6</span> Post-Injection Checklist &amp; Complete Reference</h2>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>The plugin injects code — it cannot fill in your credentials.</strong>
+          After running injection tasks, you must manually complete the following steps. The build will compile but the SDK will fail to initialise at runtime until these values are provided.
+        </div>
+      </div>
+
+      <h3>Post-Injection Manual Steps</h3>
+      <table>
+        <thead>
+          <tr><th>#</th><th>What to do</th><th>Where</th><th>Reference</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Populate <code>ClientInfo</code> with your <code>channelLicenseKey</code>, <code>clientId</code>, <code>channelId</code>, <code>password</code></td>
+            <td>Application class or NDK interactor</td>
+            <td><a href="#sdk-init" style="color:var(--blue);text-decoration:none;">Section 3 — SDK Init</a> / <a href="#ndk" style="color:var(--blue);text-decoration:none;">Section 5 — NDK</a></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Place <code>featuredev.png</code> (UAT) and <code>featureprod.png</code> (Prod) in <code>res/raw/</code></td>
+            <td><code>app/src/main/res/raw/</code></td>
+            <td><a href="#resource-files" style="color:var(--blue);text-decoration:none;">Section 2 — Resource Files</a></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Complete TrustID extraction via the Play Store Beta upload process</td>
+            <td>Google Play Console → Internal Testing</td>
+            <td><a href="#beta-upload" style="color:var(--blue);text-decoration:none;">Section 8 — Beta Upload</a></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Verify ProGuard rules for Reverse Engineering Control are present</td>
+            <td><code>proguard-rules.pro</code></td>
+            <td><a href="#re-proguard" style="color:var(--blue);text-decoration:none;">Section 6.6 — ProGuard Rules</a></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Remove the <code>TrustID</code> log before releasing to production</td>
+            <td>Application class <code>onCreate()</code></td>
+            <td><a href="#sdk-init" style="color:var(--blue);text-decoration:none;">Section 3 — SDK Init</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Complete App-Level Gradle Reference</h3>
+      <p>The tabs below show a complete, working app-level Gradle file with all AppProtectt plugin configuration in the correct order and positions.</p>
+
+      <div class="tab-group">
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="s6-groovy">build.gradle &nbsp;<span class="variant-pill groovy">Groovy</span></button>
+          <button class="tab-btn kts" data-tab="s6-kts">build.gradle.kts &nbsp;<span class="variant-pill kts">Kotlin DSL</span></button>
+        </div>
+        <div class="tab-pane active" data-tab="s6-groovy">
+          <pre><code>// ─────────────────────────────────────────────────────────────────
+// app/build.gradle — Complete AppProtectt Plugin Reference (Groovy)
+// ─────────────────────────────────────────────────────────────────
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+// [1] Apply AppProtectt plugin — must be AFTER plugins {}
+apply plugin: 'ai.protectt.plugin.AppProtecttInjector'
+
+// [2] Flutter only — inject custom XML style (remove for native apps)
+ext {
+    enableCustomStyle = true
+}
+
+// [3] Optional — exclude specific Activities from entry-point injection
+entryPoint {
+    onlyActivity = true
+    exclusions = ["SplashActivity", "HomeScreen", "MainActivity"]
+}
+
+android {
+    namespace 'com.example.myapp'
+    compileSdk 34
+
+    // Build date helper used by AppProtectt SDK
+    def getBuildDate = {->
+        def date = new Date()
+        return "\"" + date.format('yyyy-MM-dd HH:mm:ss') + "\""
+    }
+
+    defaultConfig {
+        applicationId "com.example.myapp"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        // AppProtectt required build config fields
+        buildConfigField "String", "APP_BUILD_TIME", getBuildDate()
+        buildConfigField "String", "APP_FLAVOR", "\"nonprod\""  // change to "prod" for production
+
+        // AppProtectt required NDK ABI filters
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                          'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+dependencies {
+    // AppProtectt SDK
+    implementation "ai.protectt.sdk:appprotectt:4.5.0"
+
+    // Your other dependencies
+}</code></pre>
+        </div>
+        <div class="tab-pane" data-tab="s6-kts">
+          <pre><code>// ──────────────────────────────────────────────────────────────────────
+// app/build.gradle.kts — Complete AppProtectt Plugin Reference (Kotlin DSL)
+// ──────────────────────────────────────────────────────────────────────
+
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+}
+
+// [1] Apply AppProtectt plugin — must be AFTER plugins {}
+apply(plugin = "ai.protectt.plugin.AppProtecttInjector")
+
+// [2] Flutter only — inject custom XML style (remove for native apps)
+extra["enableCustomStyle"] = true
+
+// [3] Optional — exclude specific Activities from entry-point injection
+configure&lt;ai.protectt.plugin.EntryPointExtension&gt; {
+    onlyActivity = true
+    exclusions = listOf("SplashActivity", "HomeScreen", "MainActivity")
+}
+
+android {
+    namespace = "com.example.myapp"
+    compileSdk = 34
+
+    // Build date helper used by AppProtectt SDK
+    val getBuildDate: () -&gt; String = {
+        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        "\"${sdf.format(java.util.Date())}\""
+    }
+
+    defaultConfig {
+        applicationId = "com.example.myapp"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        // AppProtectt required build config fields
+        buildConfigField("String", "APP_BUILD_TIME", getBuildDate())
+        buildConfigField("String", "APP_FLAVOR", "\"nonprod\"") // change to "prod" for production
+
+        // AppProtectt required NDK ABI filters
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            isMinifyEnabled = false
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+}
+
+dependencies {
+    // AppProtectt SDK
+    implementation("ai.protectt.sdk:appprotectt:4.5.0")
+
+    // Your other dependencies
+}</code></pre>
+        </div>
+      </div>
+
+      <h3>Complete Project-Level Gradle Reference</h3>
+      <p>The complete project-level file showing <code>buildscript</code>, SDK repository, and the AppProtectt plugin classpath in the correct order:</p>
+
+      <div class="tab-group">
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="s6p-groovy">build.gradle &nbsp;<span class="variant-pill groovy">Groovy</span></button>
+          <button class="tab-btn kts" data-tab="s6p-kts">build.gradle.kts &nbsp;<span class="variant-pill kts">Kotlin DSL</span></button>
+        </div>
+        <div class="tab-pane active" data-tab="s6p-groovy">
+          <pre><code>// ─────────────────────────────────────────────────────────────────────
+// build.gradle (project level) — Complete Reference (Groovy)
+// ─────────────────────────────────────────────────────────────────────
+
+// [MUST be first] AppProtectt Gradle plugin classpath
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://package.protectt.ai/repository/ai-protectt-plugin-appprotectt-injector/"
+            credentials {
+                username = findProperty("protecttUser") ?: "customer@protectt.ai"
+                password = findProperty("protecttPass") ?: "7TKq7=8ozI(XI2(d"
+            }
+        }
+    }
+    dependencies {
+        classpath "ai.protectt.plugin:app-protectt-plugin:1.0.0-beta"
+    }
+}
+
+plugins {
+    id 'com.android.application' version '8.1.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+}
+
+// AppProtectt SDK Maven repository — all projects
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://package.protectt.ai/repository/ai-protecttsdk-appprotectt/"
+            credentials {
+                username = findProperty("mavenRepoUser")?.toString()
+                password = findProperty("mavenRepoPassword")?.toString()
+            }
+        }
+    }
+}</code></pre>
+        </div>
+        <div class="tab-pane" data-tab="s6p-kts">
+          <pre><code>// ─────────────────────────────────────────────────────────────────────
+// build.gradle.kts (project level) — Complete Reference (Kotlin DSL)
+// ─────────────────────────────────────────────────────────────────────
+
+// [MUST be first] AppProtectt Gradle plugin classpath
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://package.protectt.ai/repository/ai-protectt-plugin-appprotectt-injector/")
+            credentials {
+                username = findProperty("protecttUser") as String? ?: "customer@protectt.ai"
+                password = findProperty("protecttPass") as String? ?: "7TKq7=8ozI(XI2(d"
+            }
+        }
+    }
+    dependencies {
+        classpath("ai.protectt.plugin:app-protectt-plugin:1.0.0-beta")
+    }
+}
+
+plugins {
+    id("com.android.application") version "8.1.0" apply false
+    id("org.jetbrains.kotlin.android") version "1.9.0" apply false
+}
+
+// AppProtectt SDK Maven repository — all projects
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://package.protectt.ai/repository/ai-protecttsdk-appprotectt/")
+            credentials {
+                username = findProperty("mavenRepoUser") as String?
+                password = findProperty("mavenRepoPassword") as String?
+            }
+        }
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <h3>SDK Initialization — Java vs Kotlin</h3>
+      <p>After the plugin injects the boilerplate, fill in your application-specific credentials. The tabs below show the complete <code>onCreate()</code> for both languages:</p>
+
+      <div class="tab-group">
+        <div class="tab-bar">
+          <button class="tab-btn java active" data-tab="s6-java">Application.java &nbsp;<span class="variant-pill java">Java</span></button>
+          <button class="tab-btn kotlin" data-tab="s6-kotlin">Application.kt &nbsp;<span class="variant-pill kotlin">Kotlin</span></button>
+        </div>
+        <div class="tab-pane active" data-tab="s6-java">
+          <pre><code>public class MyApp extends Application {
+
+    static {
+        System.loadLibrary("sampleappaar"); // match CMakeLists.txt project name
+    }
+
+    // NDK native method declarations
+    public native String appPackageName();
+    public native String appName();
+    public native String channelLicenseKey();
+    public native String clientId();
+    public native String channelId();
+    public native String password();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // ── Register callbacks before anything else ──
+        AppProtecttInteractor.Companion.registerCallbackActivities(this);
+
+        // ── [DEBUG ONLY] Remove this log before production release ──
+        Log.i("TrustID", AppProtecttInteractor.Companion.getTrust(this));
+
+        // ── Populate client info from NDK ──
+        ClientInfo clientInfo = new ClientInfo();
+        clientInfo.setPackageName(appPackageName());
+        clientInfo.setAppName(appName());
+        clientInfo.setChannelLicenseKey(channelLicenseKey());
+        clientInfo.setClientId(Integer.parseInt(clientId()));
+        clientInfo.setChannelId(Integer.parseInt(channelId()));
+        clientInfo.setPassword(password());
+        clientInfo.setMainAppVersionCode(String.valueOf(BuildConfig.VERSION_CODE));
+        clientInfo.setAppVersionName(BuildConfig.VERSION_NAME);
+        AppProtecttInteractor.Companion.setClientInfo(clientInfo);
+
+        // ── Initialise SDK ──
+        new AppProtecttInteractor(this).initAppProtectt(
+            "SplashActivity",               // launcher activity simple name
+            R.layout.alert_layout,          // alert layout resource
+            R.drawable.ic_app_logo,         // your app logo drawable
+            0,                              // style (R.style.AlertDialogCustom for Flutter)
+            BuildConfig.BUILD_TYPE,
+            2,                              // 1 = AlertDialog, 2 = BottomSheet
+            BuildConfig.APP_FLAVOR,
+            BuildConfig.APP_BUILD_TIME
+        );
+
+        AppProtecttInteractor.Companion.updateCustRefIdAPI("YOUR_DEVICE_ID");
+    }
+}</code></pre>
+        </div>
+        <div class="tab-pane" data-tab="s6-kotlin">
+          <pre><code>class MyApp : Application() {
+
+    companion object {
+        init {
+            System.loadLibrary("sampleappaar") // match CMakeLists.txt project name
+        }
+    }
+
+    // NDK native method declarations
+    private external fun appPackageName(): String
+    private external fun appName(): String
+    private external fun channelLicenseKey(): String
+    private external fun clientId(): String
+    private external fun channelId(): String
+    private external fun password(): String
+
+    override fun onCreate() {
+        super.onCreate()
+
+        // ── Register callbacks before anything else ──
+        AppProtecttInteractor.registerCallbackActivities(this)
+
+        // ── [DEBUG ONLY] Remove this log before production release ──
+        Log.i("TrustID", AppProtecttInteractor.getTrust(this)!!)
+
+        // ── Populate client info from NDK ──
+        val clientInfo = ClientInfo().apply {
+            packageName    = appPackageName()
+            appName        = appName()
+            channelLicenseKey = channelLicenseKey()
+            clientId       = clientId().toInt()
+            channelId      = channelId().toInt()
+            password       = password()
+            mainAppVersionCode = BuildConfig.VERSION_CODE.toString()
+            appVersionName = BuildConfig.VERSION_NAME
+        }
+        AppProtecttInteractor.setClientInfo(clientInfo)
+
+        // ── Initialise SDK ──
+        AppProtecttInteractor(this).initAppProtectt(
+            "SplashActivity",               // launcher activity simple name
+            R.layout.alert_layout,          // alert layout resource
+            R.drawable.ic_app_logo,         // your app logo drawable
+            0,                              // style (R.style.AlertDialogCustom for Flutter)
+            BuildConfig.BUILD_TYPE,
+            SDKConstants.BOTTOMSHEET_DIALOG, // or SDKConstants.ALERT_DIALOG
+            BuildConfig.APP_FLAVOR,
+            BuildConfig.APP_BUILD_TIME
+        )
+
+        AppProtecttInteractor.updateCustRefIdAPI("YOUR_DEVICE_ID")
+    }
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- FINAL FOOTER NOTE -->
+    <div style="text-align:center; padding: 20px 0 40px;">
+      <p style="font-size:12px; color:var(--text-subtle);">
+        AppProtectt SDK Integration Guide · Ver 4.7 · 24 October 2025<br>
+        <span style="color:var(--border)">—</span><br>
+        © Protectt.ai Labs Private Limited. Confidential and Proprietary.
+      </p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ── TOC active highlight ──
+  const sections = document.querySelectorAll('.section');
+  const tocLinks = document.querySelectorAll('.toc-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(link => link.classList.remove('active'));
+        const id = entry.target.id;
+        const active = document.querySelector(`.toc-link[href="#${id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-56px 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // ── Tab Groups ──
+  document.querySelectorAll('.tab-group').forEach(function(group) {
+    var btns = group.querySelectorAll('.tab-btn');
+    var panes = group.querySelectorAll('.tab-pane');
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var target = btn.getAttribute('data-tab');
+        btns.forEach(function(b) { b.classList.remove('active'); });
+        panes.forEach(function(p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        group.querySelector('.tab-pane[data-tab="' + target + '"]').classList.add('active');
+      });
+    });
+  });
+
+  // ── Copy buttons (also works inside tab-groups) ──
+  const COPY_SVG = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5.5" y="5.5" width="8" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 10.5H2.5A1.5 1.5 0 0 1 1 9V2.5A1.5 1.5 0 0 1 2.5 1H9A1.5 1.5 0 0 1 10.5 2.5V3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+  const CHECK_SVG = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5L6.5 12L13 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  document.querySelectorAll('.code-block, .tab-group').forEach(function(block) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.innerHTML = COPY_SVG + '<span>Copy</span>';
+
+    btn.addEventListener('click', function() {
+      // For tab-groups, copy only the active pane
+      var codeEl = block.classList.contains('tab-group')
+        ? block.querySelector('.tab-pane.active pre code') || block.querySelector('pre code')
+        : block.querySelector('pre code');
+      if (!codeEl) return;
+      var plainText = codeEl.innerText || codeEl.textContent || '';
+
+      function onCopied() {
+        btn.classList.add('copied');
+        btn.innerHTML = CHECK_SVG + '<span>Copied!</span>';
+        setTimeout(function() {
+          btn.classList.remove('copied');
+          btn.innerHTML = COPY_SVG + '<span>Copy</span>';
+        }, 2000);
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(plainText).then(onCopied).catch(function() {
+          fallbackCopy(plainText, onCopied);
+        });
+      } else {
+        fallbackCopy(plainText, onCopied);
+      }
+    });
+
+    block.appendChild(btn);
+  });
+
+  function fallbackCopy(text, cb) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); cb(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+</script>
+</body>
+</html>
