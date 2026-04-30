@@ -6,17 +6,18 @@
 <title>AppProtectt SDK — Integration Guide</title>
 <style>
   :root {
-    --bg: #ffffff;
-    --surface: #f8fafc;
-    --surface2: #f1f5f9;
-    --border: #d0d7de;
-    --border-subtle: #e5e7eb;
-    --text: #0f172a;
-    --text-muted: #334155;
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --border-subtle: #21262d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
     --text-subtle: #64748b;
     --accent: #c0392b;
     --accent-dark: #922b21;
     --accent-glow: rgba(192,57,43,0.15);
+    --accent-gradient: linear-gradient(90deg, #c0392b 0%, #1f4db8 100%);
     --blue: #58a6ff;
     --blue-subtle: rgba(88,166,255,0.08);
     --green: #3fb950;
@@ -26,8 +27,9 @@
     --orange: #e3693b;
     --orange-subtle: rgba(227,105,59,0.1);
     --purple: #bc8cff;
-    --code-bg: #f8fafc;
-    --code-border: #d0d7de;
+    --code-bg: #0d1117;
+    --code-border: #30363d;
+    --header-bg: rgba(13,17,23,0.92);
     --toc-width: 260px;
     --radius: 8px;
     --radius-sm: 4px;
@@ -39,18 +41,24 @@
 
 
 
-  body.theme-dark {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1c2330;
-    --border: #30363d;
-    --border-subtle: #21262d;
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --text-subtle: #6e7681;
-    --code-bg: #0d1117;
-    --code-border: #30363d;
-    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
+  body.theme-light {
+    --bg: #ffffff;
+    --surface: #f3f5f8;
+    --surface2: #eef2f7;
+    --border: #e5e7eb;
+    --border-subtle: #e5e7eb;
+    --text: #1f2933;
+    --text-muted: #4b5563;
+    --text-subtle: #6b7280;
+    --code-bg: #f6f8fa;
+    --code-border: #e5e7eb;
+    --header-bg: rgba(255,255,255,0.94);
+    --blue-subtle: rgba(37, 99, 235, 0.08);
+    --green-subtle: rgba(34,197,94,0.09);
+    --yellow-subtle: rgba(217,119,6,0.12);
+    --orange-subtle: rgba(234,88,12,0.1);
+    --accent-glow: rgba(192,57,43,0.1);
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.08);
   }
 
   .theme-toggle {
@@ -79,12 +87,21 @@
   /* ── TOP HEADER ── */
   .site-header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(13,17,23,0.92);
+    background: var(--header-bg);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     padding: 0 24px;
     display: flex; align-items: center; justify-content: space-between;
     height: 56px;
+  }
+  .site-header::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--accent-gradient);
   }
   .site-header .brand {
     display: flex; align-items: center; gap: 10px;
@@ -299,7 +316,7 @@
     font-family: var(--font-mono);
     font-size: 13px;
     line-height: 1.6;
-    color: #e6edf3;
+    color: var(--text);
     background: none;
     border: none;
     padding: 0;
@@ -602,6 +619,19 @@
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   }
   .timeline-desc { color: var(--text-muted); font-size: 14px; margin-bottom: 12px; }
+
+  body.theme-light .toc-module { background: #ffffff; }
+  body.theme-light .toc-link.active {
+    background: linear-gradient(90deg, rgba(192,57,43,0.12), rgba(31,77,184,0.09));
+  }
+  body.theme-light .prereq-card,
+  body.theme-light .code-block,
+  body.theme-light .tab-group {
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.07);
+  }
+  body.theme-light tr:nth-child(even) td { background: #fafbfc; }
+  body.theme-light .site-header .brand { color: #1e3a8a; }
+  body.theme-light .callout { box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
 </style>
 </head>
 <body>
@@ -3181,22 +3211,24 @@ allprojects {
 </div>
 
 <script>
-  // ── Theme toggle (default: light) ──
+  // ── Theme toggle (default: dark with system preference fallback) ──
   const themeToggle = document.getElementById('theme-toggle');
-  const savedTheme = localStorage.getItem('docs-theme') || 'light';
-  if (savedTheme === 'dark') document.body.classList.add('theme-dark');
+  const savedTheme = localStorage.getItem('docs-theme');
+  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  const initialTheme = savedTheme || (prefersLight ? 'light' : 'dark');
+  if (initialTheme === 'light') document.body.classList.add('theme-light');
 
   const setThemeButtonLabel = () => {
     if (!themeToggle) return;
-    themeToggle.textContent = document.body.classList.contains('theme-dark') ? 'Light theme' : 'Dark theme';
+    themeToggle.textContent = document.body.classList.contains('theme-light') ? 'Dark theme' : 'Light theme';
   };
 
   setThemeButtonLabel();
 
   if (themeToggle) {
     themeToggle.addEventListener('click', function() {
-      document.body.classList.toggle('theme-dark');
-      const nextTheme = document.body.classList.contains('theme-dark') ? 'dark' : 'light';
+      document.body.classList.toggle('theme-light');
+      const nextTheme = document.body.classList.contains('theme-light') ? 'light' : 'dark';
       localStorage.setItem('docs-theme', nextTheme);
       setThemeButtonLabel();
     });
