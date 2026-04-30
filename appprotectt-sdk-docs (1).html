@@ -1374,95 +1374,54 @@ std::string password          = <span class="str">""</span>;  <span class="cm">/
 }</code></pre>
       </div>
 
-      <h3 id="ndk-java">Java — Application Class Binding</h3>
-      <div class="tags"><span class="tag java">Java</span></div>
+      <h3 id="ndk-java">Java / Kotlin — Application Class Binding (Tabular)</h3>
+      <p>Use either Java or Kotlin implementation below based on your project language.</p>
+      <table class="table">
+        <thead><tr><th>Step</th><th>Java</th><th>Kotlin</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Load native library</strong></td>
+            <td><pre><code>static {
+    System.loadLibrary("sampleappaar");
+}</code></pre></td>
+            <td><pre><code>init {
+    System.loadLibrary("sampleappaar")
+}</code></pre></td>
+          </tr>
+          <tr>
+            <td><strong>Declare native / external methods</strong></td>
+            <td><pre><code>public native String appName();
+public native String appPackageName();
+public native String channelId();
+public native String channelLicenseKey();
+public native String clientId();
+public native String password();</code></pre></td>
+            <td><pre><code>private external fun appPackageName(): String
+private external fun appName(): String
+private external fun channelLicenseKey(): String
+private external fun clientId(): String
+private external fun channelId(): String
+private external fun password(): String</code></pre></td>
+          </tr>
+          <tr>
+            <td><strong>Use methods</strong></td>
+            <td><pre><code>className.appName();
+className.appPackageName();
+Integer.parseInt(className.channelId());
+className.channelLicenseKey();
+Integer.parseInt(className.clientId());
+className.password();</code></pre></td>
+            <td><pre><code>className.appPackageName()
+className.appName()
+className.channelLicenseKey()
+className.clientId().toInt()
+className.channelId().toInt()
+className.password()</code></pre></td>
+          </tr>
+        </tbody>
+      </table>
 
-      <p><strong>Load the NDK library</strong> (the library name must match the project name in <code>CMakeLists.txt</code>):</p>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Application.java — static block</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
-        </div>
-        <pre><code><span class="kw">static</span> {
-    <span class="cm">/* parameter passed in System.loadLibrary should match the
-       project name in CMakeLists.txt */</span>
-    <span class="cls">System</span>.<span class="fn">loadLibrary</span>(<span class="str">"sampleappaar"</span>);
-}</code></pre>
-      </div>
-
-      <p><strong>Declare native methods in your class:</strong></p>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Application.java — native methods</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
-        </div>
-        <pre><code><span class="kw">public native</span> <span class="cls">String</span> <span class="fn">appName</span>();
-<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">appPackageName</span>();
-<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">channelId</span>();
-<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">channelLicenseKey</span>();
-<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">clientId</span>();
-<span class="kw">public native</span> <span class="cls">String</span> <span class="fn">password</span>();</code></pre>
-      </div>
-
-      <p><strong>Calling the methods:</strong></p>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Java — usage</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
-        </div>
-        <pre><code>className.<span class="fn">appName</span>();
-className.<span class="fn">appPackageName</span>();
-<span class="cls">Integer</span>.<span class="fn">parseInt</span>(className.<span class="fn">channelId</span>());
-className.<span class="fn">channelLicenseKey</span>();
-<span class="cls">Integer</span>.<span class="fn">parseInt</span>(className.<span class="fn">clientId</span>());
-className.<span class="fn">Password</span>();</code></pre>
-      </div>
-
-      <h3>Kotlin — Application Class Binding</h3>
-      <div class="tags"><span class="tag kotlin">Kotlin</span></div>
-
-      <p><strong>Load the NDK library:</strong></p>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Application.kt — init block</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
-        </div>
-        <pre><code><span class="fn">init</span> {
-    <span class="cm">/* parameter passed in System.loadLibrary should match the
-       project name in CMakeLists.txt */</span>
-    <span class="cls">System</span>.<span class="fn">loadLibrary</span>(<span class="str">"sampleappaar"</span>)
-}</code></pre>
-      </div>
-
-      <p><strong>Declare external functions:</strong></p>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Application.kt — external functions</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
-        </div>
-        <pre><code><span class="kw">private external fun</span> <span class="fn">appPackageName</span>(): <span class="cls">String</span>
-<span class="kw">private external fun</span> <span class="fn">appName</span>(): <span class="cls">String</span>
-<span class="kw">private external fun</span> <span class="fn">channelLicenseKey</span>(): <span class="cls">String</span>
-<span class="kw">private external fun</span> <span class="fn">clientId</span>(): <span class="cls">String</span>
-<span class="kw">private external fun</span> <span class="fn">channelId</span>(): <span class="cls">String</span>
-<span class="kw">private external fun</span> <span class="fn">password</span>(): <span class="cls">String</span></code></pre>
-      </div>
-
-      <p><strong>Calling the methods:</strong></p>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Kotlin — usage</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
-        </div>
-        <pre><code><span class="cls">ClassName</span>.<span class="fn">appPackageName</span>()
-<span class="cls">ClassName</span>.<span class="fn">appName</span>()
-<span class="cls">ClassName</span>.<span class="fn">channelLicenseKey</span>()
-<span class="cls">ClassName</span>.<span class="fn">clientId</span>().<span class="fn">toInt</span>()
-<span class="cls">ClassName</span>.<span class="fn">channelId</span>().<span class="fn">toInt</span>()
-<span class="cls">ClassName</span>.<span class="fn">password</span>()</code></pre>
-      </div>
-
-      <div class="callout info">
+<div class="callout info">
         <div class="callout-icon">ℹ️</div>
         <div class="callout-body">
           <strong>Singleton Object Class</strong>
@@ -1524,9 +1483,11 @@ JNIEXPORT jstring JNICALL
 }</code></pre>
       </div>
 
-      <h3>2. Implement the Method in Launcher Activity</h3>
-
-      <div class="tags"><span class="tag java">Java</span></div>
+      <h3>2. Implement the Method in Launcher Activity (Tabular)</h3>
+      <table class="table">
+        <thead><tr><th>Language</th><th>LauncherActivity implementation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Java</strong></td><td>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">LauncherActivity.java</span>
@@ -1540,11 +1501,8 @@ JNIEXPORT jstring JNICALL
     <span class="cls">Logger</span>.INSTANCE.<span class="fn">doLogging</span>(<span class="kw">this</span>, <span class="kw">this</span>);
 }
 
-<span class="kw">private native void</span> <span class="fn">getLoggingStatus</span>();</code></pre>
-      </div>
-
-      <div class="tags"><span class="tag kotlin">Kotlin</span></div>
-      <div class="code-block">
+<span class="kw">private native void</span> <span class="fn">getLoggingStatus</span>();</code></pre></td></tr>
+          <tr><td><strong>Kotlin</strong></td><td>
         <div class="code-header">
           <span class="code-lang">LauncherActivity.kt</span>
           <div class="code-dots"><span></span><span></span><span></span></div>
@@ -1557,8 +1515,9 @@ JNIEXPORT jstring JNICALL
     <span class="cls">Logger</span>.<span class="fn">doLogging</span>(<span class="kw">this</span>, <span class="kw">this</span>)
 }
 
-<span class="kw">private external fun</span> <span class="fn">getLoggingStatus</span>()</code></pre>
-      </div>
+<span class="kw">private external fun</span> <span class="fn">getLoggingStatus</span>()</code></pre></td></tr>
+        </tbody>
+      </table>
 
       <h3>3. Invoke in onCreate</h3>
       <div class="code-block">
@@ -1584,10 +1543,12 @@ JNIEXPORT jstring JNICALL
 <span class="kw">public native void</span> <span class="fn">close</span>();</code></pre>
       </div>
 
-      <h3 id="re-logging">5. Add Logging in Launcher Activity</h3>
-      <p>Call the following methods inside <code>onResume</code> of the Launcher Activity:</p>
-
-      <div class="tags"><span class="tag java">Java</span></div>
+      <h3 id="re-logging">5. Add Logging in Launcher Activity (Tabular)</h3>
+      <p>Choose either Java or Kotlin implementation for <code>onResume</code>:</p>
+      <table class="table">
+        <thead><tr><th>Language</th><th><code>onResume</code> snippet</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Java</strong></td><td>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">LauncherActivity.java — onResume</span>
@@ -1602,11 +1563,8 @@ JNIEXPORT jstring JNICALL
             <span class="fn">close</span>();
         }
     }, <span class="num">2000</span>);
-}</code></pre>
-      </div>
-
-      <div class="tags"><span class="tag kotlin">Kotlin</span></div>
-      <div class="code-block">
+}</code></pre></td></tr>
+          <tr><td><strong>Kotlin</strong></td><td>
         <div class="code-header">
           <span class="code-lang">LauncherActivity.kt — onResume</span>
           <div class="code-dots"><span></span><span></span><span></span></div>
@@ -1624,8 +1582,9 @@ JNIEXPORT jstring JNICALL
             }
         }
     }
-}</code></pre>
-      </div>
+}</code></pre></td></tr>
+        </tbody>
+      </table>
 
       <h3 id="re-proguard">6. ProGuard Rules for Reverse Engineering Control</h3>
       <div class="callout warning">
