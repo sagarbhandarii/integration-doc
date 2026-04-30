@@ -1002,15 +1002,35 @@
       <p>Open your <strong>app-level</strong> <code>build.gradle</code> file and configure the following:</p>
 
       <h4>Step 1 — Apply Plugins</h4>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">build.gradle (app)</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="dep-step1-groovy">Groovy</button>
+          <button class="tab-btn kts" data-tab="dep-step1-kts">Kotlin DSL</button>
         </div>
-        <pre><code><span class="fn">plugins</span> {
+        <div class="tab-pane active" data-tab="dep-step1-groovy">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle (app)</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code><span class="fn">plugins</span> {
     <span class="fn">id</span> <span class="str">'com.android.application'</span>
     <span class="fn">id</span> <span class="str">'kotlin-android'</span>
 }</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="dep-step1-kts">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle.kts (app)</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code><span class="fn">plugins</span> {
+    <span class="fn">id</span>(<span class="str">"com.android.application"</span>)
+    <span class="fn">id</span>(<span class="str">"kotlin-android"</span>)
+}</code></pre>
+          </div>
+        </div>
       </div>
 
       <h4>Step 2 — Add SDK Dependency</h4>
@@ -1026,12 +1046,18 @@
       <p>Add the Protectt.ai Maven repository to your <strong>project-level</strong> <code>build.gradle</code> or <code>settings.gradle</code>:</p>
 
       <p><strong>Local Setup (with local.properties):</strong></p>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">build.gradle (project) — Local</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="maven-local-groovy">Groovy</button>
+          <button class="tab-btn kts" data-tab="maven-local-kts">Kotlin DSL</button>
         </div>
-        <pre><code><span class="fn">allprojects</span> {
+        <div class="tab-pane active" data-tab="maven-local-groovy">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle (project) — Local</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code><span class="fn">allprojects</span> {
     <span class="fn">repositories</span> {
         <span class="fn">google</span>()
         <span class="fn">jcenter</span>()
@@ -1044,15 +1070,44 @@
         }
     }
 }</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="maven-local-kts">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle.kts (project) — Local</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code><span class="fn">allprojects</span> {
+    <span class="fn">repositories</span> {
+        <span class="fn">google</span>()
+        <span class="fn">jcenter</span>()
+        <span class="fn">maven</span> {
+            url = <span class="fn">uri</span>(<span class="str">"https://package.protectt.ai/repository/ai-protecttsdk-appprotectt/"</span>)
+            <span class="fn">credentials</span> {
+                username = <span class="fn">findProperty</span>(<span class="str">"mavenRepoUser"</span>)?.<span class="fn">toString</span>()
+                password = <span class="fn">findProperty</span>(<span class="str">"mavenRepoPassword"</span>)?.<span class="fn">toString</span>()
+            }
+        }
+    }
+}</code></pre>
+          </div>
+        </div>
       </div>
 
       <p><strong>CI/CD Setup (direct values):</strong></p>
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">build.gradle (project) — CI/CD</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn groovy active" data-tab="maven-cicd-groovy">Groovy</button>
+          <button class="tab-btn kts" data-tab="maven-cicd-kts">Kotlin DSL</button>
         </div>
-        <pre><code><span class="fn">allprojects</span> {
+        <div class="tab-pane active" data-tab="maven-cicd-groovy">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle (project) — CI/CD</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code><span class="fn">allprojects</span> {
     <span class="fn">repositories</span> {
         <span class="fn">google</span>()
         <span class="fn">jcenter</span>()
@@ -1065,6 +1120,29 @@
         }
     }
 }</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="maven-cicd-kts">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">build.gradle.kts (project) — CI/CD</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code><span class="fn">allprojects</span> {
+    <span class="fn">repositories</span> {
+        <span class="fn">google</span>()
+        <span class="fn">jcenter</span>()
+        <span class="fn">maven</span> {
+            url = <span class="fn">uri</span>(<span class="str">"https://package.protectt.ai/repository/ai-protecttsdk-appprotectt/"</span>)
+            <span class="fn">credentials</span> {
+                username = <span class="str">"protect.ai-github-username"</span>
+                password = <span class="str">"protect.ai-github-password"</span>
+            }
+        }
+    }
+}</code></pre>
+          </div>
+        </div>
       </div>
 
       <h4>Step 4 — Configure local.properties (Local Dev Only)</h4>
@@ -2088,17 +2166,36 @@ AppProtecttInteractor.recevieEventCallback(
       </div>
 
       <h3>B. Import Required Classes</h3>
-
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Java — Imports</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn java active" data-tab="backend-imports-java">Java</button>
+          <button class="tab-btn kotlin" data-tab="backend-imports-kotlin">Kotlin</button>
         </div>
-        <pre><code>import ai.protectt.threatsignalplugin.controller.ThreatSignalValidationPlugin;
+        <div class="tab-pane active" data-tab="backend-imports-java">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Java — Imports</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>import ai.protectt.threatsignalplugin.controller.ThreatSignalValidationPlugin;
 import ai.protectt.threatsignalplugin.dto.Request;
 import ai.protectt.threatsignalplugin.service.ThreatSignalForwarder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="backend-imports-kotlin">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Kotlin — Imports</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>import ai.protectt.threatsignalplugin.controller.ThreatSignalValidationPlugin
+import ai.protectt.threatsignalplugin.dto.Request
+import ai.protectt.threatsignalplugin.service.ThreatSignalForwarder
+import com.fasterxml.jackson.databind.ObjectMapper</code></pre>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -2109,27 +2206,54 @@ import java.util.Map;</code></pre>
       <h3 id="backend-init">A. Initialize the Plugin</h3>
       <p>The plugin requires a <code>ThreatSignalForwarder</code> to handle communication with Protectt servers.</p>
 
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Java — Plugin Initialization</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn java active" data-tab="backend-init-java">Java</button>
+          <button class="tab-btn kotlin" data-tab="backend-init-kotlin">Kotlin</button>
         </div>
-        <pre><code>// 1. Initialize the forwarder (handles communication with Protectt servers)
+        <div class="tab-pane active" data-tab="backend-init-java">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Java — Plugin Initialization</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>// 1. Initialize the forwarder (handles communication with Protectt servers)
 ThreatSignalForwarder forwarder = new ThreatSignalForwarder();
 
 // 2. Initialize the plugin instance
 ThreatSignalValidationPlugin plugin = new ThreatSignalValidationPlugin(forwarder);</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="backend-init-kotlin">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Kotlin — Plugin Initialization</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>// 1. Initialize the forwarder (handles communication with Protectt servers)
+val forwarder = ThreatSignalForwarder()
+
+// 2. Initialize the plugin instance
+val plugin = ThreatSignalValidationPlugin(forwarder)</code></pre>
+          </div>
+        </div>
       </div>
 
       <h3 id="backend-validate">B. Executing Validation</h3>
       <p>Pass the JSON request received from the mobile/client side to the plugin.</p>
 
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">Java — Validation Logic</span>
-          <div class="code-dots"><span></span><span></span><span></span></div>
+      <div class="tab-group" data-tabs>
+        <div class="tab-bar">
+          <button class="tab-btn java active" data-tab="backend-validate-java">Java</button>
+          <button class="tab-btn kotlin" data-tab="backend-validate-kotlin">Kotlin</button>
         </div>
-        <pre><code>ObjectMapper mapper = new ObjectMapper();
+        <div class="tab-pane active" data-tab="backend-validate-java">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Java — Validation Logic</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>ObjectMapper mapper = new ObjectMapper();
 
 try {
     // Map the incoming JSON string to the Plugin Request DTO
@@ -2148,6 +2272,35 @@ try {
     // Handle parsing or connection errors
     System.err.println("Plugin Integration Error: " + e.getMessage());
 }</code></pre>
+          </div>
+        </div>
+        <div class="tab-pane" data-tab="backend-validate-kotlin">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">Kotlin — Validation Logic</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <pre><code>val mapper = ObjectMapper()
+
+try {
+    // Map the incoming JSON string to the Plugin Request DTO
+    val req = mapper.readValue(jsonRequest, Request::class.java)
+
+    // Call the validation logic
+    val private_key = "private_key"
+    val response = plugin.validate(req, private_key)
+
+    // Process the result
+    println(
+        "Validation Response: " +
+        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response)
+    )
+} catch (e: Exception) {
+    // Handle parsing or connection errors
+    System.err.println("Plugin Integration Error: ${e.message}")
+}</code></pre>
+          </div>
+        </div>
       </div>
     </section>
 
