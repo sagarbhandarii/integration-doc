@@ -6,14 +6,14 @@
 <title>AppProtectt SDK — Integration Guide</title>
 <style>
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1c2330;
-    --border: #30363d;
-    --border-subtle: #21262d;
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --text-subtle: #6e7681;
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --surface2: #f1f5f9;
+    --border: #d0d7de;
+    --border-subtle: #e5e7eb;
+    --text: #0f172a;
+    --text-muted: #334155;
+    --text-subtle: #64748b;
     --accent: #c0392b;
     --accent-dark: #922b21;
     --accent-glow: rgba(192,57,43,0.15);
@@ -26,15 +26,41 @@
     --orange: #e3693b;
     --orange-subtle: rgba(227,105,59,0.1);
     --purple: #bc8cff;
-    --code-bg: #0d1117;
-    --code-border: #30363d;
+    --code-bg: #f8fafc;
+    --code-border: #d0d7de;
     --toc-width: 260px;
     --radius: 8px;
     --radius-sm: 4px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
+    --shadow: 0 1px 3px rgba(2,6,23,0.08), 0 8px 24px rgba(2,6,23,0.06);
     --font-mono: 'Cascadia Code','Fira Code','Consolas','SF Mono',monospace;
     --font-body: 'Georgia', 'Times New Roman', serif;
     --font-ui: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  }
+
+
+
+  body.theme-dark {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --border-subtle: #21262d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-subtle: #6e7681;
+    --code-bg: #0d1117;
+    --code-border: #30363d;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
+  }
+
+  .theme-toggle {
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -586,6 +612,7 @@
     Protectt<span class="brand-dot">.ai</span>
   </a>
   <div class="meta">
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch color theme">Dark theme</button>
     <span class="badge">v4.7</span>
     <span>24 Oct 2025</span>
   </div>
@@ -3154,6 +3181,27 @@ allprojects {
 </div>
 
 <script>
+  // ── Theme toggle (default: light) ──
+  const themeToggle = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('docs-theme') || 'light';
+  if (savedTheme === 'dark') document.body.classList.add('theme-dark');
+
+  const setThemeButtonLabel = () => {
+    if (!themeToggle) return;
+    themeToggle.textContent = document.body.classList.contains('theme-dark') ? 'Light theme' : 'Dark theme';
+  };
+
+  setThemeButtonLabel();
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function() {
+      document.body.classList.toggle('theme-dark');
+      const nextTheme = document.body.classList.contains('theme-dark') ? 'dark' : 'light';
+      localStorage.setItem('docs-theme', nextTheme);
+      setThemeButtonLabel();
+    });
+  }
+
   // ── TOC active highlight ──
   const sections = document.querySelectorAll('.section');
   const tocLinks = document.querySelectorAll('.toc-link');
