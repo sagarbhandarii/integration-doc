@@ -107,6 +107,12 @@
     font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
     text-transform: uppercase; color: var(--text-subtle);
   }
+  .toc-controls { padding: 0 16px 14px; }
+  .toc-search { width: 100%; padding: 8px 10px; border-radius: 6px; border:1px solid var(--border); background: var(--bg); color: var(--text); font-size: 12px; }
+  .toc-module { margin: 0 10px 8px; border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.01); }
+  .toc-module > summary { list-style: none; cursor: pointer; padding: 8px 10px; font-size: 12px; font-weight: 700; color: var(--text); font-family: var(--font-mono); border-bottom:1px solid var(--border-subtle); }
+  .toc-module[open] > summary { background: var(--surface2); }
+  .toc-module > summary::-webkit-details-marker { display: none; }
   .toc-section { margin-bottom: 4px; }
   .toc-link {
     display: block;
@@ -589,109 +595,40 @@
 
   <!-- SIDEBAR / TOC -->
   <nav class="sidebar" aria-label="Table of contents">
-    <div class="toc-heading">On this page</div>
+    <div class="toc-heading">Developer Index</div>
+    <div class="toc-controls"><input id="toc-search" class="toc-search" type="search" placeholder="Filter sections (e.g. Kotlin, ATS, ProGuard)"></div>
 
-    <div class="toc-section">
-      <a href="#prerequisites" class="toc-link">Prerequisites</a>
-    </div>
-    <div class="toc-section">
-      <a href="#project-setup" class="toc-link">Project Setup</a>
-      <a href="#kotlin-config" class="toc-link sub">Kotlin Configuration</a>
-      <a href="#dependencies" class="toc-link sub">Dependencies</a>
-    </div>
-    <div class="toc-section">
-      <a href="#resource-files" class="toc-link">Resource Files</a>
-    </div>
-    <div class="toc-section">
-      <a href="#sdk-init" class="toc-link">SDK Initialization</a>
-      <a href="#init-java" class="toc-link sub">Java</a>
-      <a href="#init-kotlin" class="toc-link sub">Kotlin</a>
-      <a href="#flutter-style" class="toc-link sub">Flutter Style</a>
-    </div>
-    <div class="toc-section">
-      <a href="#proguard" class="toc-link">ProGuard</a>
-    </div>
-    <div class="toc-section">
-      <a href="#ndk" class="toc-link">NDK Integration</a>
-      <a href="#ndk-setup" class="toc-link sub">Setup</a>
-      <a href="#ndk-cpp" class="toc-link sub">C++ Code</a>
-      <a href="#ndk-java" class="toc-link sub">Java / Kotlin Binding</a>
-    </div>
-    <div class="toc-section">
-      <a href="#reverse-engineering" class="toc-link">Reverse Engineering Control</a>
-      <a href="#re-ndk" class="toc-link sub">NDK Methods</a>
-      <a href="#re-logging" class="toc-link sub">Logging</a>
-      <a href="#re-proguard" class="toc-link sub">ProGuard Rules</a>
-    </div>
-    <div class="toc-section">
-      <a href="#threat-signals" class="toc-link">Advanced Threat Signal (ATS)</a>
-      <a href="#fdanalytics-requirements" class="toc-link sub">Requirements</a>
-      <a href="#fdanalytics-adding" class="toc-link sub">Adding the SDK</a>
-      <a href="#fdanalytics-usage" class="toc-link sub">Basic Usage</a>
-      <a href="#fdanalytics-events" class="toc-link sub">Threat Events</a>
-      <a href="#fdanalytics-signal" class="toc-link sub">Generating Signal</a>
-      <a href="#fdanalytics-transmission" class="toc-link sub">API Transmission</a>
-      <a href="#fdanalytics-security" class="toc-link sub">Security Practices</a>
-      <a href="#backend-overview" class="toc-link sub" style="margin-top:4px;color:var(--blue);opacity:0.85;">↳ Java Backend Plugin</a>
-      <a href="#backend-installation" class="toc-link subsub">Installation</a>
-      <a href="#backend-implementation" class="toc-link subsub">Implementation</a>
-      <a href="#backend-api" class="toc-link subsub">API Reference</a>
-      <a href="#backend-responses" class="toc-link subsub">Response Codes</a>
-      <a href="#backend-flow" class="toc-link subsub">Integration Flow</a>
-      <a href="#backend-sample" class="toc-link subsub">Sample I/O</a>
-    </div>
-    <div class="toc-divider"></div>
-    <div class="toc-section">
-      <a href="#beta-upload" class="toc-link">Beta Upload to Play Store</a>
-    </div>
-    <div class="toc-section">
-      <a href="#maven-migration" class="toc-link">AAR → Maven Migration</a>
-    </div>
-    <div class="toc-divider"></div>
-    <div class="toc-section">
-      <a href="#upi-play-protection" class="toc-link">Auto Play Protection</a>
-      <a href="#upi-play-protection-steps" class="toc-link sub">Enable Steps</a>
-    </div>
-    <div class="toc-section">
-      <a href="#upi-play-integrity" class="toc-link">Play Integrity API</a>
-    </div>
-    <div class="toc-section">
-      <a href="#upi-ats" class="toc-link">Advanced Threat Signaling</a>
-    </div>
-    <div class="toc-section">
-      <a href="#upi-encryption" class="toc-link">Encrypt Requests &amp; Responses</a>
-    </div>
-    <div class="toc-divider"></div>
-    <div class="toc-heading">Plugin Integration</div>
-    <div class="toc-section">
-      <a href="#plugin-overview" class="toc-link">Overview</a>
-    </div>
-    <div class="toc-section">
-      <a href="#plugin-step1" class="toc-link">Step 1 — Project Gradle</a>
-      <a href="#plugin-step1-groovy" class="toc-link sub">Groovy DSL</a>
-      <a href="#plugin-step1-kts" class="toc-link sub">Kotlin DSL</a>
-    </div>
-    <div class="toc-section">
-      <a href="#plugin-step2" class="toc-link">Step 2 — Apply Plugin</a>
-      <a href="#plugin-step2-groovy" class="toc-link sub">Groovy DSL</a>
-      <a href="#plugin-step2-kts" class="toc-link sub">Kotlin DSL</a>
-    </div>
-    <div class="toc-section">
-      <a href="#plugin-step3" class="toc-link">Step 3 — Gradle Tasks</a>
-    </div>
-    <div class="toc-section">
-      <a href="#plugin-step4" class="toc-link">Step 4 — Entry Point Exclusions</a>
-      <a href="#plugin-step4-groovy" class="toc-link sub">Groovy DSL</a>
-      <a href="#plugin-step4-kts" class="toc-link sub">Kotlin DSL</a>
-    </div>
-    <div class="toc-section">
-      <a href="#plugin-step5" class="toc-link">Step 5 — Custom Styles (Flutter)</a>
-      <a href="#plugin-step5-groovy" class="toc-link sub">Groovy DSL</a>
-      <a href="#plugin-step5-kts" class="toc-link sub">Kotlin DSL</a>
-    </div>
-    <div class="toc-section">
-      <a href="#plugin-step6" class="toc-link">Step 6 — Execution Notes</a>
-    </div>
+    <details class="toc-module" open>
+      <summary>1. AppProtectt SDK Integration</summary>
+      <div class="toc-section"><a href="#prerequisites" class="toc-link">1.1 Prerequisites</a></div>
+      <div class="toc-section"><a href="#project-setup" class="toc-link">1.2 Project Setup</a><a href="#kotlin-config" class="toc-link sub">1.2.1 Groovy / Kotlin DSL Setup</a><a href="#dependencies" class="toc-link sub">1.2.2 Dependencies</a></div>
+      <div class="toc-section"><a href="#sdk-init" class="toc-link">1.3 SDK Initialization</a><a href="#init-java" class="toc-link sub">1.3.1 Java</a><a href="#init-kotlin" class="toc-link sub">1.3.2 Kotlin</a></div>
+      <div class="toc-section"><a href="#proguard" class="toc-link">1.4 ProGuard</a></div>
+      <div class="toc-section"><a href="#ndk" class="toc-link">1.5 NDK Integration</a><a href="#ndk-setup" class="toc-link sub">1.5.1 Setup</a><a href="#ndk-cpp" class="toc-link sub">1.5.2 C++</a><a href="#ndk-java" class="toc-link sub">1.5.3 Java / Kotlin Binding</a></div>
+    </details>
+
+    <details class="toc-module" open>
+      <summary>2. ATS Integration</summary>
+      <div class="toc-section"><a href="#threat-signals" class="toc-link">2.1 Android SDK</a></div>
+      <div class="toc-section"><a href="#backend-overview" class="toc-link">2.2 Backend Java Plugin</a><a href="#backend-installation" class="toc-link sub">2.2.1 Installation</a><a href="#backend-implementation" class="toc-link sub">2.2.2 Implementation</a><a href="#backend-api" class="toc-link sub">2.2.3 API Reference</a></div>
+      <div class="toc-section"><a href="#backend-flow" class="toc-link">2.3 Request / Response Flow</a><a href="#backend-sample" class="toc-link sub">2.3.1 Sample I/O</a></div>
+    </details>
+
+    <details class="toc-module" open>
+      <summary>3. Auto Inject Plugin</summary>
+      <div class="toc-section"><a href="#plugin-overview" class="toc-link">3.1 Overview</a></div>
+      <div class="toc-section"><a href="#plugin-step1" class="toc-link">3.2 Project Gradle Setup</a><a href="#plugin-step1-groovy" class="toc-link sub">3.2.1 Groovy DSL</a><a href="#plugin-step1-kts" class="toc-link sub">3.2.2 Kotlin DSL</a></div>
+      <div class="toc-section"><a href="#plugin-step2" class="toc-link">3.3 Apply Plugin</a></div>
+      <div class="toc-section"><a href="#plugin-step4" class="toc-link">3.4 Configuration</a></div>
+      <div class="toc-section"><a href="#plugin-step6" class="toc-link">3.5 Execution Notes</a></div>
+    </details>
+
+    <div class="toc-heading" style="margin-top:8px;">Additional Modules</div>
+    <div class="toc-section"><a href="#reverse-engineering" class="toc-link">Reverse Engineering Control</a></div>
+    <div class="toc-section"><a href="#beta-upload" class="toc-link">Beta Upload to Play Store</a></div>
+    <div class="toc-section"><a href="#maven-migration" class="toc-link">AAR → Maven Migration</a></div>
+    <div class="toc-section"><a href="#upi-fraud-prevention" class="toc-link">UPI Fraud Prevention</a></div>
+    <div class="toc-section"><a href="#integration-checklist" class="toc-link">Integration Checklist</a></div>
   </nav>
 
   <!-- MAIN CONTENT -->
@@ -1766,6 +1703,14 @@ AppProtecttInteractor.recevieEventCallback(
           Once migrated to Maven, you will automatically receive SDK updates by bumping the version number in your dependency declaration, without needing to manually download and replace <code>.aar</code> files.
         </div>
       </div>
+    </section>
+
+    <section class="section" id="integration-checklist">
+      <div class="section-label">Final Validation</div>
+      <h2><span class="section-num">14</span> Integration Checklist</h2>
+      <p>Use this final checklist before your production rollout:</p>
+      <div class="callout note"><strong>Production Checks</strong><ul><li>Confirm SDK and ATS dependencies resolve from the configured Maven repository.</li><li>Verify initialization runs once in the Application class for Java/Kotlin implementation.</li><li>Ensure ProGuard/R8 rules are applied for release builds only.</li><li>Validate NDK binding methods load and return expected identifiers.</li><li>Run plugin tasks and confirm generated files are committed as needed.</li><li>Verify signal request/response encryption and backend validation response handling.</li><li>Perform UAT and BETA Play Store flow validation before production release.</li></ul></div>
+      <div class="callout warn"><strong>Common Mistakes</strong><ul><li>Mixing Groovy and Kotlin DSL snippets in the same Gradle file.</li><li>Applying plugin before classpath setup.</li><li>Skipping callback registration or using wrong launcher class name.</li><li>Not aligning backend checks with frontend ATS payload format.</li></ul></div>
     </section>
 
     <hr>
@@ -3240,6 +3185,17 @@ allprojects {
       });
     });
   });
+
+  // ── TOC search/filter ──
+  const tocSearch = document.getElementById('toc-search');
+  if (tocSearch) {
+    tocSearch.addEventListener('input', function() {
+      const q = this.value.toLowerCase().trim();
+      document.querySelectorAll('.sidebar .toc-link').forEach(link => {
+        link.style.display = link.textContent.toLowerCase().includes(q) ? 'block' : 'none';
+      });
+    });
+  }
 
   // ── Copy buttons (also works inside tab-groups) ──
   const COPY_SVG = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5.5" y="5.5" width="8" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 10.5H2.5A1.5 1.5 0 0 1 1 9V2.5A1.5 1.5 0 0 1 2.5 1H9A1.5 1.5 0 0 1 10.5 2.5V3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
